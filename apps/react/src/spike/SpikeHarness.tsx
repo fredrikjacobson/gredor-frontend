@@ -8,7 +8,7 @@
  */
 import { useEffect, useRef, useState } from "react";
 import { convertiXBRLToXBRL } from "@/util/convertiXBRLToXBRL.ts";
-import { serializeReactHTMLToiXBRL } from "@/ix/serializeIxbrl.ts";
+import { convertHTMLToiXBRL } from "@/util/ixbrlSerializer.ts";
 import { IxbrlSpikeDocument } from "@/spike/IxbrlSpikeDocument.tsx";
 
 interface Check {
@@ -114,19 +114,24 @@ export function SpikeHarness() {
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    try {
-      if (!containerRef.current) return;
-      const generatedIxbrl = serializeReactHTMLToiXBRL(containerRef.current, {
-        title: "Spik",
-        programVersion: __APP_VERSION__,
-      });
-      const generatedXbrl = convertiXBRLToXBRL(generatedIxbrl);
-      setIxbrl(generatedIxbrl);
-      setXbrl(generatedXbrl);
-      setChecks(runChecks(generatedXbrl));
-    } catch (e) {
-      setError(e instanceof Error ? `${e.message}\n${e.stack}` : String(e));
-    }
+    void (async () => {
+      try {
+        if (!containerRef.current) return;
+        // Spiken isolerar ix:-mekanismen från CSS: tom CSS-insamlare. Detta kör
+        // ändå den delade transformkärnan (convertHTMLToiXBRL) på React-input.
+        const generatedIxbrl = await convertHTMLToiXBRL(containerRef.current, {
+          title: "Spik",
+          programVersion: __APP_VERSION__,
+          collectUsedCss: async () => "",
+        });
+        const generatedXbrl = convertiXBRLToXBRL(generatedIxbrl);
+        setIxbrl(generatedIxbrl);
+        setXbrl(generatedXbrl);
+        setChecks(runChecks(generatedXbrl));
+      } catch (e) {
+        setError(e instanceof Error ? `${e.message}\n${e.stack}` : String(e));
+      }
+    })();
   }, []);
 
   const allPass = checks.length > 0 && checks.every((c) => c.pass);
