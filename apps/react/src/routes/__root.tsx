@@ -1,5 +1,7 @@
 import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
+import { Toaster } from "sonner";
 import { getAppFullVersion } from "@/util/configUtils.ts";
+import { ModalHost } from "@/components/ModalHost.tsx";
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -54,6 +56,10 @@ function RootLayout() {
           <div className="opacity-75">Version: {getAppFullVersion()}</div>
         </div>
       </footer>
+
+      {/* Globala värdar: kö-lagda meddelandemodaler + toaster. */}
+      <ModalHost />
+      <Toaster position="bottom-right" richColors />
     </div>
   );
 }
