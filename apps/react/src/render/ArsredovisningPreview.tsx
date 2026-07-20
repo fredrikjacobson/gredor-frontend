@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "@/render/render.scss";
 import "@/render/renderComponents.scss";
 import type { Arsredovisning } from "@/model/arsredovisning/Arsredovisning.ts";
@@ -6,18 +6,27 @@ import {
   getTaxonomyManager,
   type TaxonomyManager,
 } from "@/util/TaxonomyManager.ts";
-import { TaxonomyRootName } from "@/model/taxonomy/TaxonomyItem.ts";
+import {
+  type TaxonomyItem,
+  TaxonomyRootName,
+} from "@/model/taxonomy/TaxonomyItem.ts";
+import { RenderIXBRLHeader } from "@/render/sections/RenderIXBRLHeader.tsx";
+import { RenderCover } from "@/render/sections/RenderCover.tsx";
 import { RenderResultatrakning } from "@/render/sections/RenderResultatrakning.tsx";
 import { RenderBalansrakning } from "@/render/sections/RenderBalansrakning.tsx";
+import { RenderUnderskrifter } from "@/render/sections/RenderUnderskrifter.tsx";
 
 interface TaxonomyManagers {
+  forvaltningsberattelse: TaxonomyManager;
   resultatrakning: TaxonomyManager;
   balansrakning: TaxonomyManager;
+  noter: TaxonomyManager;
 }
 
 /**
- * A4-förhandsgranskning av årsredovisningen. Renderar resultaträkning +
- * balansräkning (fler sektioner tillkommer). Taxonomierna laddas asynkront.
+ * A4-förhandsgranskning av årsredovisningen: iXBRL-huvud + försättsblad +
+ * resultaträkning + balansräkning + underskrifter. Förvaltningsberättelse och
+ * noter tillkommer (kräver enum/tuple-belopprader). Taxonomierna laddas async.
  */
 export function ArsredovisningPreview({
   arsredovisning,
@@ -29,15 +38,41 @@ export function ArsredovisningPreview({
   useEffect(() => {
     let active = true;
     void Promise.all([
+      getTaxonomyManager(TaxonomyRootName.FORVALTNINGSBERATTELSE),
       getTaxonomyManager(TaxonomyRootName.RESULTATRAKNING_KOSTNADSSLAGSINDELAD),
       getTaxonomyManager(TaxonomyRootName.BALANSRAKNING),
-    ]).then(([resultatrakning, balansrakning]) => {
-      if (active) setManagers({ resultatrakning, balansrakning });
+      getTaxonomyManager(TaxonomyRootName.NOTER),
+    ]).then(([forvaltningsberattelse, resultatrakning, balansrakning, noter]) => {
+      if (active)
+        setManagers({
+          forvaltningsberattelse,
+          resultatrakning,
+          balansrakning,
+          noter,
+        });
     });
     return () => {
       active = false;
     };
   }, []);
+
+  // Unika decimal-taxonomiobjekt över alla sektioner → enheter i huvudet.
+  const decimalUnitItems = useMemo(() => {
+    if (!managers) return [];
+    return (Object.values(managers) as TaxonomyManager[])
+      .flatMap((manager) =>
+        manager
+          .getRoot()
+          .childrenFlat.filter(
+            (item: TaxonomyItem) =>
+              item.properties.type === "xbrli:decimalItemType",
+          ),
+      )
+      .filter(
+        (item: TaxonomyItem, i: number, arr: TaxonomyItem[]) =>
+          arr.findIndex((other) => other.xmlName === item.xmlName) === i,
+      );
+  }, [managers]);
 
   if (!managers) {
     return (
@@ -49,6 +84,12 @@ export function ArsredovisningPreview({
 
   return (
     <div className="arsredovisning-root">
+      <RenderIXBRLHeader
+        arsredovisning={arsredovisning}
+        decimalUnitItems={decimalUnitItems}
+      />
+      <RenderCover arsredovisning={arsredovisning} showFaststallelseintyg={false} />
+      <div className="page-break"></div>
       <RenderResultatrakning
         arsredovisning={arsredovisning}
         taxonomyManager={managers.resultatrakning}
@@ -58,6 +99,7 @@ export function ArsredovisningPreview({
         arsredovisning={arsredovisning}
         taxonomyManager={managers.balansrakning}
       />
+      <RenderUnderskrifter arsredovisning={arsredovisning} />
     </div>
   );
 }
