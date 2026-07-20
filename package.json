@@ -5,6 +5,10 @@
   "license": "AGPL-3.0-or-later WITH romic-exception",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
     "dev": "npm run start",
     "start": "npm run start:development",
@@ -16,13 +20,14 @@
     "build-and-preview": "npm run build && npm run preview",
     "type-check": "vue-tsc --build",
     "lint": "eslint",
-    "generate-api-types": "npx openapi-typescript src/api/schema/gredor-backend-v1.yaml -o ./src/api/schema/gredor-backend-v1.d.ts",
-    "generate-sie-mappings": "npx tsx tools/sieMappingsGeneratorTool.ts -o src/data/taxonomy/k2/2021-10-31/sieMappings.ts",
-    "generate-taxonomy-types": "npx tsx tools/taxonomyItemIdGeneratorTool.ts -o ./src/data/taxonomy/k2/2021-10-31/taxonomyItemIds.d.ts",
+    "generate-api-types": "npm run generate-api-types -w @gredor/domain",
+    "generate-sie-mappings": "npm run generate-sie-mappings -w @gredor/domain",
+    "generate-taxonomy-types": "npm run generate-taxonomy-types -w @gredor/domain",
     "cy:open": "npx -y dotenv-cli -e .env.cypress -- start-server-and-test build-and-preview http://localhost:4173 'cypress open'",
     "cy:run": "npx -y dotenv-cli -e .env.cypress -- start-server-and-test build-and-preview http://localhost:4173 'cypress run'"
   },
   "dependencies": {
+    "@gredor/domain": "*",
     "@designbycode/luhn-algorithm": "^1.0.1",
     "@popperjs/core": "^2.11.8",
     "@vueuse/core": "^14.2.1",

@@ -13,6 +13,13 @@ const appVersion = JSON.stringify(
     execSync("git rev-parse --short HEAD").toString().trim(),
 );
 
+// Sökväg till en undermapp i det delade domänpaketet (@gredor/domain).
+function domainSrc(subPath: string): string {
+  return fileURLToPath(
+    new URL(`./packages/domain/src/${subPath}`, import.meta.url),
+  );
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   define: {
@@ -63,10 +70,18 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-      $fonts: resolve("./public/fonts"),
-    },
+    // Array-form så ordningen är garanterad: de reserverade domän-prefixen
+    // (@gredor/domain) matchas före appens generella "@" → ./src.
+    alias: [
+      { find: "@/framework", replacement: domainSrc("framework") },
+      { find: "@/util", replacement: domainSrc("util") },
+      { find: "@/model", replacement: domainSrc("model") },
+      { find: "@/data", replacement: domainSrc("data") },
+      { find: "@/templates", replacement: domainSrc("templates") },
+      { find: "@/api/schema", replacement: domainSrc("api/schema") },
+      { find: "@", replacement: fileURLToPath(new URL("./src", import.meta.url)) },
+      { find: "$fonts", replacement: resolve("./public/fonts") },
+    ],
   },
   build: {
     sourcemap: true,

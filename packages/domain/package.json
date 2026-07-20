@@ -1,0 +1,39 @@
+{
+  "name": "@gredor/domain",
+  "version": "0.0.0",
+  "description": "Framework-agnostic domain logic for Gredor (model, taxonomy, calculations, SIE import, iXBRL serialization). Shared by the Vue and React apps.",
+  "author": "Potatron Tech AB",
+  "license": "AGPL-3.0-or-later WITH romic-exception",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*"
+  },
+  "scripts": {
+    "generate-api-types": "openapi-typescript src/api/schema/gredor-backend-v1.yaml -o ./src/api/schema/gredor-backend-v1.d.ts",
+    "generate-sie-mappings": "tsx tools/sieMappingsGeneratorTool.ts -o src/data/taxonomy/k2/2021-10-31/sieMappings.ts",
+    "generate-taxonomy-types": "tsx tools/taxonomyItemIdGeneratorTool.ts -o ./src/data/taxonomy/k2/2021-10-31/taxonomyItemIds.d.ts",
+    "generate": "run-s generate-api-types generate-sie-mappings generate-taxonomy-types",
+    "type-check": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "decimal.js": "^10.6.0",
+    "domhandler": "^5.0.3",
+    "xml-formatter": "^3.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@types/yargs": "^17.0.35",
+    "@vitest/coverage-v8": "^3.2.4",
+    "happy-dom": "^20.0.0",
+    "npm-run-all2": "^8.0.4",
+    "openapi-typescript": "^7.13.0",
+    "tsx": "^4.19.2",
+    "typescript": "~5.9.3",
+    "vitest": "^3.2.4",
+    "yargs": "^18.0.0"
+  }
+}

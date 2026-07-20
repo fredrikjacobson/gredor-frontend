@@ -1,5 +1,3 @@
-import type { Verksamhetsar } from "@/model/arsredovisning/Arsredovisning.ts";
-import { h, type VNode } from "vue";
 import type { TaxonomyItem } from "@/model/taxonomy/TaxonomyItem.ts";
 import { type Belopprad, getBeloppradInList, getTaxonomyItemForBelopprad } from "@/model/arsredovisning/Belopprad.ts";
 import {
@@ -9,39 +7,6 @@ import {
 } from "@/model/arsredovisning/beloppradtyper/BeloppradTuple.ts";
 import type { TaxonomyManager } from "@/util/TaxonomyManager.ts";
 
-/**
- * Genererar en VNode för verksamhetsår som visas i tabellhuvudet, för en grupp
- * taxonomiobjekt. T.ex. "2025-12-31" eller "2027-01-01 – 2027-12-31", beroende
- * på vad det är för grupp.
- *
- * @param groupTaxonomyItem - Taxonomiobjektetsgruppen.
- * @param verksamhetsar - Verksamhetsåret för vilken data ska visas.
- * @returns Ett VNode-element som representerar den genererade
- * tabellhuvudcellen.
- */
-export function getValueColumnHeaderCell(
-  groupTaxonomyItem: TaxonomyItem,
-  noter: Belopprad[],
-  verksamhetsar: Verksamhetsar,
-): VNode {
-  const attrs = { scope: "col", class: "value-container" };
-
-  switch (getPeriodTypeForGroup(groupTaxonomyItem, noter)) {
-    case "duration":
-      // Verksamhetsåret som en period, från startdatumet till slutdatumet
-      return h("th", attrs, [
-        verksamhetsar.startdatum,
-        h("br"),
-        "–",
-        verksamhetsar.slutdatum,
-      ]);
-    case "instant":
-      // Verksamhetsårets balansdag, dvs slutdatum
-      return h("th", attrs, [verksamhetsar.slutdatum]);
-    case undefined:
-      return h("th", attrs, []);
-  }
-}
 
 export function getPeriodTypeForGroup(
   groupTaxonomyItem: TaxonomyItem,

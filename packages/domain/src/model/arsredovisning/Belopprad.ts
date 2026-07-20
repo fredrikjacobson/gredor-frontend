@@ -1,5 +1,5 @@
 import { TaxonomyManager } from "@/util/TaxonomyManager.ts";
-import { type Reactive, reactive } from "vue";
+import { type Reactive, reactive } from "@/framework/reactivity.ts";
 import type { Arsredovisning } from "@/model/arsredovisning/Arsredovisning.ts";
 import {
   hasBeloppradMonetaryValue,

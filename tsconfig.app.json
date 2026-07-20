@@ -11,9 +11,13 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/framework/*": ["./packages/domain/src/framework/*"],
+      "@/util/*": ["./packages/domain/src/util/*"],
+      "@/model/*": ["./packages/domain/src/model/*"],
+      "@/data/*": ["./packages/domain/src/data/*"],
+      "@/templates/*": ["./packages/domain/src/templates/*"],
+      "@/api/schema/*": ["./packages/domain/src/api/schema/*"],
+      "@/*": ["./src/*"]
     }
   }
 }

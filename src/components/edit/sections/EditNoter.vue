@@ -8,7 +8,7 @@ import { type Arsredovisning } from "@/model/arsredovisning/Arsredovisning.ts";
 import EditBelopprad from "@/components/edit/blocks/EditBelopprad.vue";
 import { createBelopprad } from "@/model/arsredovisning/Belopprad.ts";
 import { getTaxonomyManager } from "@/util/TaxonomyManager.ts";
-import { getValueColumnHeaderCell } from "@/util/noterUtils.ts";
+import { getValueColumnHeaderCell } from "@/view/noterViewUtils.ts";
 import { usePrepopulateSection } from "@/components/edit/composables/usePrepopulateSection.ts";
 import { TaxonomyRootName } from "@/model/taxonomy/TaxonomyItem.ts";
 import BaseEditBeloppradTitle from "@/components/edit/blocks/belopprad/BaseEditBeloppradTitle.vue";

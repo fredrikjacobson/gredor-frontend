@@ -1,4 +1,4 @@
-import { markRaw } from "vue";
+import { markRaw } from "@/framework/reactivity.ts";
 import {
   type CalculationProcessor,
   createNewCalculationProcessor,

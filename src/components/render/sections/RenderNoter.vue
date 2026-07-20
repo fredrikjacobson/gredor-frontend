@@ -11,10 +11,8 @@ import {
   getTaxonomyItemForBelopprad,
   isBeloppradInTaxonomyItemList,
 } from "@/model/arsredovisning/Belopprad.ts";
-import {
-  getHeaderBeloppraderForNoter,
-  getValueColumnHeaderCell,
-} from "@/util/noterUtils.ts";
+import { getHeaderBeloppraderForNoter } from "@/util/noterUtils.ts";
+import { getValueColumnHeaderCell } from "@/view/noterViewUtils.ts";
 import { TaxonomyRootName } from "@/model/taxonomy/TaxonomyItem.ts";
 
 const taxonomyManager = await getTaxonomyManager(TaxonomyRootName.NOTER);
