@@ -1,9 +1,15 @@
+import "@/styles/app.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { SpikeHarness } from "@/spike/SpikeHarness.tsx";
+import { RouterProvider } from "@tanstack/react-router";
+import { router } from "@/router.tsx";
+import { initArsredovisningPersistence } from "@/stores/arsredovisningStore.ts";
+
+// Koppla in autospar-persistensen (samma localStorage-nycklar som Vue-appen).
+initArsredovisningPersistence();
 
 createRoot(document.getElementById("app")!).render(
   <StrictMode>
-    <SpikeHarness />
+    <RouterProvider router={router} />
   </StrictMode>,
 );
