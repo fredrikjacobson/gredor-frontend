@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { CheckCircle2, Circle, ListTodo, Send } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { useArsredovisningStore } from "@/stores/arsredovisningStore.ts";
+import { ArsredovisningPreview } from "@/render/ArsredovisningPreview.tsx";
 
 export const Route = createFileRoute("/redigera")({
   component: EditorPage,
@@ -88,9 +89,10 @@ function EditorPage() {
           </p>
         </section>
 
-        {/* Förhandsgranskning (A4) — iXBRL-preview, Fas 3/4. */}
-        <aside className="rounded-lg border border-line bg-surface-medium p-4 text-center text-sm text-ink-light shadow-card">
-          Förhandsgranskning (A4)
+        {/* Förhandsgranskning (A4) — live iXBRL-preview (resultaträkning
+            porterad; fler sektioner tillkommer). */}
+        <aside className="overflow-auto rounded-lg border border-line bg-surface-medium p-2 shadow-card">
+          <ArsredovisningPreview arsredovisning={arsredovisning} />
         </aside>
 
         {/* Att göra-panel — ersätter popover-baserade todo-listan. */}

@@ -1,0 +1,141 @@
+/*
+ * Stilar för de porterade render-komponenterna. I Vue låg dessa i respektive
+ * komponents scoped <style> (data-v-). Här är de vanliga globala klasser,
+ * scopade under .arsredovisning-root för att inte läcka in i app-chrome:t.
+ *
+ * OBS: för den slutliga dokument-CSS:en (som samlas in och bäddas in i iXBRL:en)
+ * behöver selektorerna matcha det parsade dokumentet utan root-prefix — det
+ * hanteras när React-serialiseraren kopplas in fullt ut (fas 3-avslut). Detta
+ * är för den visuella förhandsgranskningen.
+ */
+.arsredovisning-root {
+  // RenderResultatrakning.vue (scoped)
+  .rr-table {
+    margin-bottom: 1rem;
+
+    th {
+      padding-bottom: 1.5rem !important;
+    }
+  }
+
+  // BaseRenderBeloppradComparable.vue (scoped)
+  .summa.level-1,
+  .summa-forced {
+    font-weight: 600;
+
+    td {
+      padding-top: 1.25rem;
+    }
+
+    .rubrik {
+      font-style: italic;
+    }
+  }
+
+  .summa.level-2 {
+    font-weight: 600;
+
+    td {
+      padding-top: 0.5rem;
+    }
+  }
+
+  .summa.level-3 {
+    font-weight: 500;
+  }
+
+  .summa + *:not(.summa) td {
+    padding-top: 1.25rem;
+  }
+
+  .summa + .level-3:not(.summa) td {
+    padding-top: 0.75rem;
+  }
+
+  .period-end td {
+    padding-bottom: 1rem !important;
+  }
+
+  // RenderBeloppradString.vue (scoped)
+  .abstract.level-1,
+  .abstract-header.level-1 .header,
+  .level-1 .header {
+    font-weight: 600;
+    font-size: 1.15rem;
+
+    &:not(:first-of-type) td {
+      padding-top: 1.5rem;
+    }
+  }
+
+  .level-2:not(.abstract) {
+    &:not(:last-of-type):not(.empty-value) td {
+      padding-bottom: 1.25rem;
+    }
+  }
+
+  .level-2 {
+    &.abstract,
+    &.abstract-header .header {
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    &.abstract,
+    &.abstract-header {
+      &:not(:first-of-type) td {
+        padding-top: 1.25rem;
+      }
+    }
+  }
+
+  .abstract.level-3,
+  .abstract-header.level-3 .header {
+    font-weight: 500;
+  }
+
+  tr:not(.abstract) {
+    .header {
+      font-weight: 600;
+    }
+
+    &:not(.empty-value) .header {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  p {
+    margin-bottom: 0;
+
+    &:not(:last-of-type) {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  // Tabellstruktur (från render.scss finns rubrik/value-container m.m.)
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .value-container {
+    text-align: right;
+    white-space: nowrap;
+    padding-left: 1.5rem;
+    vertical-align: bottom;
+  }
+
+  .not-container {
+    text-align: center;
+    padding-left: 1rem;
+  }
+
+  td.rubrik {
+    width: 100%;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    margin: 0;
+  }
+}

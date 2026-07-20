@@ -54,19 +54,21 @@ export function IxNonNumeric(
     name: string;
     continuedAt?: string;
     tupleRef?: string;
+    /** Övriga iXBRL-attribut (motsvarar Vues additionalIxbrlAttrs). */
+    additional?: Record<string, string>;
   } & Children,
 ) {
-  const { children, ...rest } = props;
-  return createElement("ix:nonNumeric", attrs(rest), children);
+  const { children, additional, ...rest } = props;
+  return createElement("ix:nonNumeric", attrs({ ...rest, ...additional }), children);
 }
 
 export function IxNonFraction(
   props: {
     contextRef: string;
     name: string;
-    unitRef: string;
-    decimals: string;
-    scale: string;
+    unitRef?: string;
+    decimals?: string;
+    scale?: string;
     format: string;
     sign?: string;
     tupleRef?: string;

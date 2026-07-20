@@ -1,0 +1,117 @@
+.arsredovisning-root {
+  width: 210mm;
+  height: 100%;
+  max-height: 297mm;
+  overflow-x: hidden;
+  overflow-y: scroll;
+
+  background-color: white;
+
+  padding: 1.25rem 2rem 2rem;
+  line-height: 1.2;
+
+  @media screen {
+    border: 1px solid rgb(240, 240, 240);
+    border-image: none;
+    box-shadow: 0.25rem 0.25rem 0.3rem #999;
+  }
+}
+
+// Detta är rotelementet i iXBRL:en som skickas till Bolagsverket
+.arsredovisning-content {
+  width: 100%;
+  font-family: "EB Garamond", serif;
+  padding: 1.25rem;
+  line-height: 1.2;
+
+  @media screen {
+    // För att det ska bli snyggt när årsredovisningen visas i Bolagsverkets
+    // e-tjänst (ej PDF)
+    max-width: calc(210mm - 4rem);
+  }
+
+  * {
+    // Nödvändigt i de fall webbläsarens textstorlek inte är lika med 16 px,
+    // för att textstorleken ska bli rätt
+    font-size: 1rem;
+  }
+
+  & > *:not(:first-child) {
+    padding-top: 2rem;
+
+    @media screen {
+      // Matcha marginalen från utskrifter
+      padding-top: 3rem;
+    }
+  }
+
+  .page-break {
+    page-break-after: always;
+    padding-top: 0;
+
+    @media screen {
+      // Visa linje i Gredor-GUI:t men inte i utskrifter
+      border-bottom: 1px solid #a0a0a0;
+      margin: 0 -3.25rem;
+      background-size: 210mm 297mm;
+    }
+  }
+
+  :deep(h1) {
+    font-size: 1.6rem;
+    font-family: "FreeSans", sans-serif;
+    font-weight: 700;
+  }
+
+  :deep(h2) {
+    font-size: 1.35rem;
+    font-weight: 600;
+  }
+
+  :deep(h3) {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-top: 0;
+  }
+
+  :deep(table) {
+    width: 100%;
+
+    tr {
+      // Fixa problem med oönskade radbrytningar när wkhtmltopdf (renderaren
+      // som Bolagverket användaren) skriver ut tabeller där td:first-child har
+      // width: 99%.
+      page-break-inside: avoid;
+    }
+
+    th h2 {
+      margin-bottom: 0;
+    }
+
+    th,
+    td {
+      border-style: hidden;
+      text-align: left;
+      vertical-align: bottom;
+      padding: 0.25rem 0;
+
+      &:first-child {
+        width: 99%;
+      }
+
+      &:not(:first-child) {
+        padding-left: 1.25rem;
+        white-space: nowrap;
+      }
+
+      &.not-container {
+        min-width: 40px;
+      }
+
+      &.value-container {
+        text-align: right;
+        min-width: 106px;
+      }
+    }
+  }
+}
