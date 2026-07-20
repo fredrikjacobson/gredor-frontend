@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/framework/*": ["../../packages/domain/src/framework/*"],
+      "@/util/*": ["../../packages/domain/src/util/*"],
+      "@/model/*": ["../../packages/domain/src/model/*"],
+      "@/data/*": ["../../packages/domain/src/data/*"],
+      "@/templates/*": ["../../packages/domain/src/templates/*"],
+      "@/api/schema/*": ["../../packages/domain/src/api/schema/*"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*", "vite.config.ts"]
+}
