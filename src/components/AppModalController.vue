@@ -23,6 +23,36 @@ const topModalDefinition = computed(() =>
 
 const modal = useTemplateRef<ComponentExposed<typeof CommonModal>>("modal");
 
+// Delar upp meddelandetexten i block. Rader som inleds med "- " grupperas till
+// en punktlista, medan övriga rader blir vanliga stycken. På så sätt kan en
+// avsändare (t.ex. SIE-importen) skicka en läsbar lista i stället för en vägg
+// av stycken.
+type ContentBlock =
+  | { type: "list"; items: string[] }
+  | { type: "paragraph"; text: string };
+
+const contentBlocks = computed<ContentBlock[]>(() => {
+  const lines = (topModalDefinition.value?.text ?? "")
+    .split(/\r?\n/)
+    .filter((line) => line.trim().length > 0);
+
+  const blocks: ContentBlock[] = [];
+  for (const line of lines) {
+    const listItemMatch = line.match(/^\s*-\s+(.*)$/);
+    if (listItemMatch) {
+      const lastBlock = blocks[blocks.length - 1];
+      if (lastBlock?.type === "list") {
+        lastBlock.items.push(listItemMatch[1]);
+      } else {
+        blocks.push({ type: "list", items: [listItemMatch[1]] });
+      }
+    } else {
+      blocks.push({ type: "paragraph", text: line });
+    }
+  }
+  return blocks;
+});
+
 function nextModal() {
   modal.value?.hide();
   setTimeout(popTopModalDefinition, 500);
@@ -58,13 +88,16 @@ watch(topModalDefinition, (newValue) => {
     <div class="message-modal-content">
       <h3 v-if="topModalDefinition.title">{{ topModalDefinition.title }}</h3>
       <!-- eslint-disable vue/no-v-html -->
-      <p
-        v-for="(line, index) in topModalDefinition.text
-          .split(/\r?\n/)
-          .filter((l) => l.trim().length > 0)"
-        :key="index"
-        v-html="linkifyStr(line)"
-      />
+      <template v-for="(block, index) in contentBlocks" :key="index">
+        <ul v-if="block.type === 'list'">
+          <li
+            v-for="(item, itemIndex) in block.items"
+            :key="itemIndex"
+            v-html="linkifyStr(item)"
+          />
+        </ul>
+        <p v-else v-html="linkifyStr(block.text)" />
+      </template>
       <!-- eslint-enable vue/no-v-html -->
     </div>
 
@@ -92,6 +125,23 @@ watch(topModalDefinition, (newValue) => {
 
     &:last-of-type {
       margin-bottom: 0;
+    }
+  }
+
+  ul {
+    margin-bottom: $spacing-sm;
+    padding-left: $spacing-lg;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    li {
+      margin-bottom: $spacing-xs;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
     }
   }
 }

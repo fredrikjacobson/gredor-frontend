@@ -53,21 +53,26 @@ describe("importing SIE files with a negative tax liability", () => {
         action: "drag-drop",
       },
     );
-    // Omklassificeringen visas som ett informationsmeddelande först, följt av
-    // samma avrundningsmeddelanden som för SIETest.se.
-    cy.get("div.message-modal-content p:nth-child(2)").should(
+    // Omklassificeringen visas som ett informationsstycke först, följt av
+    // rubriken och den grupperade listan med avrundningsfel (endast
+    // beloppradernas namn).
+    cy.get("div.message-modal-content p:nth-of-type(1)").should(
       "have.text",
       "Skattekontona (2510-2519) hade ett debetsaldo och har redovisats som en" +
         " skattefordran under Övriga fordringar i stället för som en skatteskuld." +
         " Kontrollera att detta stämmer.",
     );
-    cy.get("div.message-modal-content p:nth-child(3)").should(
+    cy.get("div.message-modal-content p:nth-of-type(2)").should(
       "have.text",
-      'Belopprad "Resultat efter finansiella poster" har avrundningsfel. Du kan behöva justera detta manuellt.',
+      "Följande belopprader har avrundningsfel och kan behöva justeras manuellt:",
     );
-    cy.get("div.message-modal-content p:nth-child(5)").should(
+    cy.get("div.message-modal-content ul li:nth-child(1)").should(
       "have.text",
-      'Belopprad "Årets resultat" har avrundningsfel. Du kan behöva justera detta manuellt.',
+      "Resultat efter finansiella poster",
+    );
+    cy.get("div.message-modal-content ul li:nth-child(3)").should(
+      "have.text",
+      "Årets resultat",
     );
     cy.get(
       '#app-modal-controller-1-footer-teleport [data-testid="wizard-next-button"]',

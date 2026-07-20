@@ -14,7 +14,10 @@ import {
   type Arsredovisning,
   createArsredovisningFromTemplate,
 } from "@/model/arsredovisning/Arsredovisning.ts";
-import { mapSieFileIntoArsredovisning } from "@/util/sieUtils.ts";
+import {
+  mapSieFileIntoArsredovisning,
+  type SieImportMessage,
+} from "@/util/sieUtils.ts";
 import CommonWizardButtons from "@/components/common/CommonWizardButtons.vue";
 import type { ComponentExposed } from "vue-component-type-helpers";
 import { useModalStore } from "@/components/common/composables/useModalStore.ts";
@@ -51,7 +54,7 @@ defineExpose({
 const arsredovisning = ref<Arsredovisning>(
   createArsredovisningFromTemplate(starterArsredovisning),
 );
-const sieMessages = ref<string[]>([]);
+const sieMessages = ref<SieImportMessage[]>([]);
 
 const orgnrValidationStatus = ref<OrgnrValidationStatus>("awaiting_input");
 const busy = ref<boolean>(false);
@@ -69,6 +72,51 @@ const { fetchCompanyRecords } = useCompanyRecordsApi({
     throw e;
   },
 });
+
+/**
+ * Formaterar ett enskilt SIE-importmeddelande till en fristående mening, t.ex.
+ * för att visas som en post i att-åtgärda-listan.
+ */
+function formatSieImportMessage(message: SieImportMessage): string {
+  switch (message.type) {
+    case "info":
+    case "warning":
+      return message.text;
+    case "avrundningsfel":
+      return (
+        `Belopprad "${message.beloppradLabel}" har avrundningsfel.` +
+        " Du kan behöva justera detta manuellt."
+      );
+  }
+}
+
+/**
+ * Bygger meddelandetexten för SIE-import-modalen. Alla belopprader som fått
+ * avrundningsfel har samma formulering, så i stället för en likadan mening per
+ * rad grupperas de under en gemensam rubrik och listas med enbart beloppradens
+ * namn. Övriga meddelanden (t.ex. information om omklassificering) visas som
+ * egna stycken före listan.
+ */
+function buildSieImportMessage(messages: SieImportMessage[]): string {
+  const avrundningsfelLabels = messages.flatMap((message) =>
+    message.type === "avrundningsfel" ? [message.beloppradLabel] : [],
+  );
+  const otherLines = messages.flatMap((message) =>
+    message.type === "avrundningsfel" ? [] : [message.text],
+  );
+
+  const lines = [...otherLines];
+  if (avrundningsfelLabels.length > 0) {
+    lines.push(
+      "Följande belopprader har avrundningsfel och kan behöva justeras" +
+        " manuellt:",
+    );
+    lines.push(...avrundningsfelLabels.map((label) => `- ${label}`));
+  }
+  lines.push("", "Varningarna kommer att dyka upp i din att-åtgärda-lista.");
+
+  return lines.join("\n");
+}
 
 async function handleSieFile(file: File) {
   busy.value = true;
@@ -92,11 +140,7 @@ async function handleSieFile(file: File) {
     );
 
     if (sieMessages.value.length > 0) {
-      showMessageModal(
-        sieMessages.value.join("\n") +
-          "\n\nVarningarna kommer att dyka upp i din att-åtgärda-lista.",
-        "SIE-import",
-      );
+      showMessageModal(buildSieImportMessage(sieMessages.value), "SIE-import");
     }
   } finally {
     busy.value = false;
@@ -124,7 +168,7 @@ async function createArsredovisning() {
           "Följande varningar uppstod när du importerade din SIE-fil.",
         timestamp: Date.now(),
         tasks: unref(sieMessages.value).map((message) => ({
-          text: message,
+          text: formatSieImportMessage(message),
           complete: false,
         })),
       });

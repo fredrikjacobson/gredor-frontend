@@ -50,17 +50,21 @@ describe("importing SIE files", () => {
         action: "drag-drop",
       },
     );
-    cy.get("div.message-modal-content p:nth-child(2)").should(
+    cy.get("div.message-modal-content p:nth-of-type(1)").should(
       "have.text",
-      'Belopprad "Resultat efter finansiella poster" har avrundningsfel. Du kan behöva justera detta manuellt.',
+      "Följande belopprader har avrundningsfel och kan behöva justeras manuellt:",
     );
-    cy.get("div.message-modal-content p:nth-child(3)").should(
+    cy.get("div.message-modal-content ul li:nth-child(1)").should(
       "have.text",
-      'Belopprad "Resultat före skatt" har avrundningsfel. Du kan behöva justera detta manuellt.',
+      "Resultat efter finansiella poster",
     );
-    cy.get("div.message-modal-content p:nth-child(4)").should(
+    cy.get("div.message-modal-content ul li:nth-child(2)").should(
       "have.text",
-      'Belopprad "Årets resultat" har avrundningsfel. Du kan behöva justera detta manuellt.',
+      "Resultat före skatt",
+    );
+    cy.get("div.message-modal-content ul li:nth-child(3)").should(
+      "have.text",
+      "Årets resultat",
     );
     cy.get(
       '#app-modal-controller-1-footer-teleport [data-testid="wizard-next-button"]',

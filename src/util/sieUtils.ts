@@ -29,6 +29,16 @@ export interface SieMapping {
   taxonomyItemId: TaxonomyItemId;
 }
 
+/**
+ * Ett meddelande från SIE-importen. Typen avgör hur meddelandet presenteras –
+ * avrundningsfel grupperas t.ex. under en gemensam rubrik i importmodalen. Den
+ * exakta formuleringen bestäms av presentationslagret.
+ */
+export type SieImportMessage =
+  | { type: "info"; text: string }
+  | { type: "warning"; text: string }
+  | { type: "avrundningsfel"; beloppradLabel: string };
+
 interface SieValue {
   nuvarandeAr: Decimal;
   foregaendeAr: Decimal;
@@ -43,13 +53,13 @@ interface SieValue {
  * @param sieFileText - Innehållet från SIE-filen som ska omvandlas.
  * @param arsredovisning - Årsredovisningsobjektet som ska fyllas med data från
  * SIE-filen.
- * @param messageCallback - Callback-funktion som anropas för att visa
- * meddelanden (t.ex. den inbyggda alert-funktionen).
+ * @param messageCallback - Callback-funktion som anropas med meddelanden om
+ * importen (varningar, information och avrundningsfel).
  */
 export async function mapSieFileIntoArsredovisning(
   sieFileText: string,
   arsredovisning: Arsredovisning,
-  messageCallback: (message: string) => void = alert,
+  messageCallback: (message: SieImportMessage) => void,
 ) {
   const parseResult = parseSieFile(sieFileText);
 
@@ -156,7 +166,10 @@ export async function mapSieFileIntoArsredovisning(
     }
 
     if (!mappingFound) {
-      messageCallback(`Varning: Konto ${basAccount} kunde inte mappas.`);
+      messageCallback({
+        type: "warning",
+        text: `Varning: Konto ${basAccount} kunde inte mappas.`,
+      });
     }
   }
 
@@ -168,11 +181,13 @@ export async function mapSieFileIntoArsredovisning(
         !value.nuvarandeAr.equals(0),
     )
   ) {
-    messageCallback(
-      "Årets resultat hittades inte eller var noll i SIE-filen. Gredor kommer" +
+    messageCallback({
+      type: "warning",
+      text:
+        "Årets resultat hittades inte eller var noll i SIE-filen. Gredor kommer" +
         " ändå att importera filen, men du bör kontrollera att du inte har" +
         " missat att slutföra din bokföring.",
-    );
+    });
   }
 
   for (const belopprad of beloppraderAdded) {
@@ -263,10 +278,10 @@ export async function mapSieFileIntoArsredovisning(
                 calculatedBelopprad.beloppTidigareAr[i];
             });
 
-            messageCallback(
-              `Belopprad "${taxonomyItem.additionalData.displayLabel}" har` +
-                " avrundningsfel. Du kan behöva justera detta manuellt.",
-            );
+            messageCallback({
+              type: "avrundningsfel",
+              beloppradLabel: taxonomyItem.additionalData.displayLabel ?? "",
+            });
           }
         }
       }
@@ -369,7 +384,7 @@ function reclassifyNegativeSkatteskulder(
   parseResult: {
     [basAccount: string]: SieValue;
   },
-  messageCallback: (message: string) => void,
+  messageCallback: (message: SieImportMessage) => void,
 ) {
   const taxLiabilityAccounts = Object.keys(parseResult).filter((account) => {
     const accountNumber = Number.parseInt(account, 10);
@@ -397,11 +412,13 @@ function reclassifyNegativeSkatteskulder(
     return;
   }
 
-  messageCallback(
-    "Skattekontona (2510-2519) hade ett debetsaldo och har redovisats som en" +
+  messageCallback({
+    type: "info",
+    text:
+      "Skattekontona (2510-2519) hade ett debetsaldo och har redovisats som en" +
       " skattefordran under Övriga fordringar i stället för som en skatteskuld." +
       " Kontrollera att detta stämmer.",
-  );
+  });
 
   // Nolla ut de år som ska flyttas på skattekontona ...
   for (const account of taxLiabilityAccounts) {
