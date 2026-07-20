@@ -18,6 +18,11 @@
     }
   }
 
+  // RenderBalansrakning.vue (scoped)
+  .br-table th {
+    padding-bottom: 1.5rem !important;
+  }
+
   // BaseRenderBeloppradComparable.vue (scoped)
   .summa.level-1,
   .summa-forced {
