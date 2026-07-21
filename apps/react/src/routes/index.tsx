@@ -1,12 +1,15 @@
-import { type ReactNode } from "react";
+import { type ReactNode, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { FilePlus2, FolderOpen, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
-import {
-  useArsredovisningStore,
-} from "@/stores/arsredovisningStore.ts";
+import { useArsredovisningStore } from "@/stores/arsredovisningStore.ts";
+import { useUiStore } from "@/stores/uiStore.ts";
 import { hasAutosavedArsredovisning } from "@/stores/gredorStorage.ts";
 import { exampleArsredovisning } from "@/templates/exampleArsredovisning.ts";
+import type { Arsredovisning } from "@/model/arsredovisning/Arsredovisning.ts";
+import { upgradeArsredovisningObject } from "@/model/arsredovisning/Arsredovisning.ts";
+import { parseGredorFile } from "@/util/fileUtils.ts";
+import { NewArsredovisningDialog } from "@/components/NewArsredovisningDialog.tsx";
 
 export const Route = createFileRoute("/")({
   component: StartPage,
@@ -16,11 +19,33 @@ function StartPage() {
   const navigate = useNavigate();
   const load = useArsredovisningStore((s) => s.load);
   const current = useArsredovisningStore((s) => s.arsredovisning);
+  const showMessageModal = useUiStore((s) => s.showMessageModal);
   const resumeAvailable = hasAutosavedArsredovisning();
+  const [newDialogOpen, setNewDialogOpen] = useState(false);
+  const openFileInputRef = useRef<HTMLInputElement>(null);
 
   const openExample = () => {
     load(structuredClone(exampleArsredovisning));
     void navigate({ to: "/redigera" });
+  };
+
+  const loadAndEdit = (arsredovisning: Arsredovisning) => {
+    load(arsredovisning);
+    void navigate({ to: "/redigera" });
+  };
+
+  const openFile = async (file: File) => {
+    try {
+      const json = await file.text();
+      const arsredovisning = parseGredorFile<Arsredovisning>(json, [
+        "arsredovisning_utkast",
+        "arsredovisning_fardig",
+      ]).data;
+      upgradeArsredovisningObject(arsredovisning);
+      loadAndEdit(arsredovisning);
+    } catch {
+      showMessageModal("Filen är ogiltig och kan inte öppnas i Gredor.", "Fel");
+    }
   };
 
   return (
@@ -62,14 +87,14 @@ function StartPage() {
           title="Ny årsredovisning"
           description="Börja från början eller importera en SIE-fil."
           actionLabel="Börja"
-          onClick={() => navigate({ to: "/redigera" })}
+          onClick={() => setNewDialogOpen(true)}
         />
         <ActionCard
           icon={<FolderOpen className="size-6 text-primary" />}
           title="Öppna fil"
           description="Fortsätt på en sparad .gredorutkast-fil."
           actionLabel="Öppna"
-          onClick={() => navigate({ to: "/redigera" })}
+          onClick={() => openFileInputRef.current?.click()}
         />
         <ActionCard
           icon={<Sparkles className="size-6 text-primary" />}
@@ -79,6 +104,27 @@ function StartPage() {
           onClick={openExample}
         />
       </div>
+
+      <input
+        ref={openFileInputRef}
+        type="file"
+        accept=".gredorutkast,.gredorfardig"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) void openFile(file);
+          e.target.value = "";
+        }}
+      />
+
+      <NewArsredovisningDialog
+        open={newDialogOpen}
+        onOpenChange={setNewDialogOpen}
+        onCreated={(arsredovisning) => {
+          setNewDialogOpen(false);
+          loadAndEdit(arsredovisning);
+        }}
+      />
     </div>
   );
 }
