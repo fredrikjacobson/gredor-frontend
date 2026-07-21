@@ -44,7 +44,7 @@ export function RenderFaststallelseintygResultatdispositionStammansPart(props: {
         unitRef="redovisningsvaluta"
       >
         {formatNumber(belopp, null, BeloppFormat.HELTAL)}
-      </IxNonFraction>
+      </IxNonFraction>{" "}
       {textAfter}
       {separator}
     </>

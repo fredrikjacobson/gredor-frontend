@@ -38,7 +38,7 @@ export function RenderFaststallelseintyg(props: {
           <IxNonNumeric contextRef="balans0" name="se-bol-base:Arsstamma">
             {faststallelseintyg.datumArsstamma}
           </IxNonNumeric>
-          .
+          .{" "}
           <br />
           <IxNonNumeric
             name={faststallelseintyg.resultatdispositionBeslut.xbrlId}
@@ -55,7 +55,7 @@ export function RenderFaststallelseintyg(props: {
                 contextRef="balans0"
                 name="se-bol-base:ArsstammaResultatDispositionBeslutstext"
               >
-                Istället beslöt årsstämman
+                Istället beslöt årsstämman{" "}
                 {RESULTATDISPOSITION_STAMMANS_DEFINITIONS.map((definition) => (
                   <RenderFaststallelseintygResultatdispositionStammansPart
                     key={definition.key}
