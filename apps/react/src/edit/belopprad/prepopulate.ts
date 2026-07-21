@@ -6,6 +6,7 @@ import {
   getBeloppradInList,
   getTaxonomyItemForBelopprad,
   hasBeloppradValue,
+  isBeloppradInTaxonomyItemList,
 } from "@/model/arsredovisning/Belopprad.ts";
 import {
   calculateValuesIntoBelopprad,
@@ -86,6 +87,27 @@ export function recalculateSums(
       calculateValuesIntoBelopprad(calcProcessor, parts, belopprad);
     }
   }
+}
+
+/**
+ * Gruppera poolen i sektioner (t.ex. balansräkningens Tillgångar /
+ * Eget kapital och skulder). Port av groupPrepopulatedSection. Varje grupp är en
+ * lista taxonomiobjekt; en belopprad hamnar i första gruppen den matchar.
+ */
+export function groupPool(
+  pool: Belopprad[],
+  groups: TaxonomyItem[][],
+): Belopprad[][] {
+  const result: Belopprad[][] = groups.map(() => []);
+  for (const belopprad of pool) {
+    for (let i = 0; i < groups.length; i++) {
+      if (isBeloppradInTaxonomyItemList(groups[i], belopprad)) {
+        result[i].push(belopprad);
+        break;
+      }
+    }
+  }
+  return result;
 }
 
 /**
