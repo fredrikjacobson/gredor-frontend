@@ -79,7 +79,7 @@ function EditorPage() {
           <Button
             size="sm"
             variant="secondary"
-            onClick={() => navigate({ to: "/" })}
+            onClick={() => navigate({ to: "/skicka-in/$step", params: { step: "filer" } })}
           >
             <Send className="size-4" /> Färdigställ &amp; skicka in
           </Button>
