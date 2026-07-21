@@ -79,6 +79,7 @@ export function TodoPanel() {
                       <button
                         type="button"
                         data-testid={`todo-list-item-${item.id}-task-${taskIndex}`}
+                        aria-pressed={task.complete}
                         className="flex w-full items-start gap-2 rounded px-1 py-0.5 text-left text-xs hover:bg-primary/5"
                         onClick={() =>
                           edit((ar) => {
