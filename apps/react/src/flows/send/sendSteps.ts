@@ -1,6 +1,4 @@
-import validator from "validator";
-
-const { isEmail } = validator;
+import isEmail from "validator/es/lib/isEmail";
 import LuhnAlgorithm from "@designbycode/luhn-algorithm";
 import type { useFlowStore } from "@/stores/flowStore.ts";
 
