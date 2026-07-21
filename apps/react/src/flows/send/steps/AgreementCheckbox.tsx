@@ -16,7 +16,7 @@ export function AgreementCheckbox({
         <input
           id={id}
           type="checkbox"
-          className="size-4"
+          className="size-4 accent-primary"
           data-testid={id}
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}

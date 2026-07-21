@@ -1,8 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-/** `/fardigstall` → första steget i färdigställ-flödet. */
+/** Färdigställ är numera en dialog i editorn — omdirigera dit. */
 export const Route = createFileRoute("/fardigstall/")({
   beforeLoad: () => {
-    throw redirect({ to: "/fardigstall/$step", params: { step: "paminnelse" } });
+    throw redirect({ to: "/redigera" });
   },
 });

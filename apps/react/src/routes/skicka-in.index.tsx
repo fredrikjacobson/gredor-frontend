@@ -1,8 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-/** `/skicka-in` → första steget i skicka-in-flödet. */
+/** Skicka in är numera en dialog i editorn — omdirigera dit. */
 export const Route = createFileRoute("/skicka-in/")({
   beforeLoad: () => {
-    throw redirect({ to: "/skicka-in/$step", params: { step: "filer" } });
+    throw redirect({ to: "/redigera" });
   },
 });

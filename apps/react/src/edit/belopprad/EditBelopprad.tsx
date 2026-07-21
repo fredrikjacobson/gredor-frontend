@@ -23,6 +23,9 @@ export interface EditBeloppradProps {
   monetaryShowBalanceSign?: boolean;
   stringMultiline?: boolean;
   stringMinimumLevel?: number;
+  /** Dölj radrubriken (används när en not med ett enda fält redan namnges av
+   *  sin grupp-/kategorirubrik, så etiketten inte upprepas). */
+  hideTitle?: boolean;
   onDelete?: () => void;
 }
 
@@ -52,6 +55,7 @@ export function EditBelopprad(props: EditBeloppradProps) {
         multiline={props.stringMultiline}
         allowDelete={props.allowDelete}
         comparableNumPreviousYears={numPreviousYears}
+        hideTitle={props.hideTitle}
         onDelete={props.onDelete}
       />
     );

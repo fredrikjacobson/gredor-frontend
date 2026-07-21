@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { type PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from "react";
 import { Maximize2, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { ArsredovisningPreview } from "@/render/ArsredovisningPreview.tsx";
@@ -27,15 +27,36 @@ export function PreviewPanel({
   arsredovisning: Arsredovisning;
 }) {
   const [mounted, setMounted] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [availWidth, setAvailWidth] = useState(A4_WIDTH);
   const [naturalHeight, setNaturalHeight] = useState(0);
   // null = anpassa till bredd; ett tal = explicit zoomnivå.
   const [zoom, setZoom] = useState<number | null>(null);
+  // null = använd standardbredd (46%); ett tal = användarens dragna bredd i px.
+  const [dragWidth, setDragWidth] = useState<number | null>(null);
+  const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
     if (open) setMounted(true);
+  }, [open]);
+
+  const remeasure = () => {
+    if (scrollRef.current) setAvailWidth(scrollRef.current.clientWidth);
+    if (contentRef.current) setNaturalHeight(contentRef.current.scrollHeight);
+  };
+
+  // Bredd/höjd mäts fel om ResizeObservern missar slutbredden medan panelen
+  // glider in (mättes ibland vid min-bredden → för liten skala + avklippt
+  // dokument). Mät om när öppningsanimationen (300 ms) har lagt sig.
+  useEffect(() => {
+    if (!open) return;
+    const timers = [
+      setTimeout(remeasure, 120),
+      setTimeout(remeasure, 360),
+    ];
+    return () => timers.forEach(clearTimeout);
   }, [open]);
 
   // Mät tillgänglig bredd (uppdateras mjukt medan panelen animerar).
@@ -74,14 +95,60 @@ export function PreviewPanel({
       ),
     );
 
+  // Dra i vänsterkanten för att justera delningen mellan editor och preview.
+  const startResize = (e: ReactPointerEvent) => {
+    e.preventDefault();
+    const rightX = panelRef.current?.getBoundingClientRect().right ?? 0;
+    setDragging(true);
+    const onMove = (ev: PointerEvent) => {
+      const w = Math.max(
+        380,
+        Math.min(window.innerWidth * 0.75, rightX - ev.clientX),
+      );
+      setDragWidth(w);
+    };
+    const onUp = () => {
+      setDragging(false);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  };
+
   return (
     <div
+      ref={panelRef}
       aria-hidden={!open}
+      onTransitionEnd={remeasure}
+      style={
+        open && dragWidth != null ? { width: `${dragWidth}px` } : undefined
+      }
       className={cn(
-        "flex shrink-0 flex-col overflow-hidden border-l bg-surface-medium transition-[width] duration-300 ease-in-out",
-        open ? "w-[46%] min-w-[380px] max-w-[680px]" : "w-0",
+        "relative flex shrink-0 flex-col overflow-hidden border-l bg-surface-medium",
+        !dragging && "transition-[width] duration-300 ease-in-out",
+        open
+          ? dragWidth != null
+            ? "min-w-[360px]"
+            : "w-[40%] min-w-[360px] max-w-[620px]"
+          : "w-0",
       )}
     >
+      {/* Dra-handtag för att ändra delningen. */}
+      {open && (
+        <div
+          onPointerDown={startResize}
+          title="Dra för att ändra bredd"
+          className="group absolute inset-y-0 left-0 z-10 flex w-2 cursor-col-resize items-stretch justify-center"
+        >
+          <span
+            className={cn(
+              "w-0.5 transition-colors",
+              dragging ? "bg-primary" : "bg-transparent group-hover:bg-primary/40",
+            )}
+          />
+        </div>
+      )}
       <div className="flex h-full w-full min-w-[380px] flex-col">
         <div className="flex shrink-0 items-center justify-between gap-2 px-3 py-2">
           <span className="text-sm font-medium text-ink">Förhandsgranskning</span>

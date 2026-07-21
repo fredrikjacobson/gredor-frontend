@@ -13,6 +13,7 @@ export function EditBeloppradString({
   multiline,
   allowDelete,
   comparableNumPreviousYears,
+  hideTitle,
   onDelete,
 }: {
   belopprad: BeloppradString;
@@ -20,6 +21,7 @@ export function EditBeloppradString({
   multiline?: boolean;
   allowDelete?: boolean;
   comparableNumPreviousYears: number;
+  hideTitle?: boolean;
   onDelete?: () => void;
 }) {
   const { taxonomyManager, editField } = useBeloppradEdit();
@@ -36,18 +38,20 @@ export function EditBeloppradString({
   if (multiline && !isAbstract) {
     return (
       <>
-        <tr className={rowClass}>
-          <td colSpan={comparableNumPreviousYears + 2} className="belopprad-title-cell">
-            <EditBeloppradTitle belopprad={belopprad} displayAsLevel={displayAsLevel} />
-          </td>
-          {allowDelete && (
-            <td>
-              <button type="button" className="text-danger" onClick={onDelete}>
-                <Trash2 className="size-4" />
-              </button>
+        {!hideTitle && (
+          <tr className={rowClass}>
+            <td colSpan={comparableNumPreviousYears + 2} className="belopprad-title-cell">
+              <EditBeloppradTitle belopprad={belopprad} displayAsLevel={displayAsLevel} />
             </td>
-          )}
-        </tr>
+            {allowDelete && (
+              <td>
+                <button type="button" className="text-danger" onClick={onDelete}>
+                  <Trash2 className="size-4" />
+                </button>
+              </td>
+            )}
+          </tr>
+        )}
         <tr className={rowClass}>
           <td colSpan={comparableNumPreviousYears + 3}>
             <textarea
@@ -64,11 +68,16 @@ export function EditBeloppradString({
 
   return (
     <tr className={rowClass}>
-      <td className="belopprad-title-cell">
-        <EditBeloppradTitle belopprad={belopprad} displayAsLevel={displayAsLevel} />
-      </td>
+      {!hideTitle && (
+        <td className="belopprad-title-cell">
+          <EditBeloppradTitle belopprad={belopprad} displayAsLevel={displayAsLevel} />
+        </td>
+      )}
       {!isAbstract && (
-        <td colSpan={comparableNumPreviousYears + 1} className="value-container text-left">
+        <td
+          colSpan={hideTitle ? comparableNumPreviousYears + 2 : comparableNumPreviousYears + 1}
+          className="value-container text-left"
+        >
           <input
             type="text"
             className="belopprad-input w-full"

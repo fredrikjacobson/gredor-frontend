@@ -284,6 +284,28 @@ export async function mapSieFileIntoArsredovisning(
  * @returns Ett objekt med kontonummer som nycklar och deras motsvarande
  * belopp som värden.
  */
+/**
+ * Läser huvudposterna #ORGNR och #FNAMN ur en SIE-fil (utan att tolka belopp),
+ * så en importguide kan förfylla organisationsnummer och företagsnamn innan
+ * själva bokföringen mappas in.
+ */
+export function parseSieHeader(sieFileText: string): {
+  orgnr?: string;
+  foretagsnamn?: string;
+} {
+  const result: { orgnr?: string; foretagsnamn?: string } = {};
+  for (const line of sieFileText.split(/\r?\n/)) {
+    const parts = line.match(/(?:[^\s"]+|"[^"]*")+/g);
+    if (!parts) continue;
+    if (parts[0] === "#ORGNR" && parts[1] && !result.orgnr) {
+      result.orgnr = parts[1].replace(/"/g, "");
+    } else if (parts[0] === "#FNAMN" && parts[1] && !result.foretagsnamn) {
+      result.foretagsnamn = parts[1].replace(/^"|"$/g, "");
+    }
+  }
+  return result;
+}
+
 function parseSieFile(sieFileText: string) {
   // SIE-specifikation: https://sie.se/wp-content/uploads/2020/05/SIE_filformat_ver_4B_080930.pdf
 

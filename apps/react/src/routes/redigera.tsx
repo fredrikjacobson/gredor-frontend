@@ -14,6 +14,10 @@ import { EditBalansrakning } from "@/edit/sections/EditBalansrakning.tsx";
 import { EditUnderskrifter } from "@/edit/sections/EditUnderskrifter.tsx";
 import { EditNoter } from "@/edit/sections/EditNoter.tsx";
 import { EditForvaltningsberattelse } from "@/edit/sections/EditForvaltningsberattelse.tsx";
+import { NoterNavProvider } from "@/edit/noter/NoterNavContext.tsx";
+import { NoterTreeSidebar } from "@/edit/noter/NoterTreeSidebar.tsx";
+import { FinalizeWizardDialog } from "@/flows/finalize/FinalizeWizardDialog.tsx";
+import { SendWizardDialog } from "@/flows/send/SendWizardDialog.tsx";
 
 export const Route = createFileRoute("/redigera")({
   component: EditorPage,
@@ -37,6 +41,9 @@ function EditorPage() {
   const [activeSection, setActiveSection] = useState<string>(SECTIONS[0].key);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [todoCollapsed, setTodoCollapsed] = useState(false);
+  const [noterTreeCollapsed, setNoterTreeCollapsed] = useState(false);
+  const [finalizeOpen, setFinalizeOpen] = useState(false);
+  const [sendOpen, setSendOpen] = useState(false);
 
   if (!arsredovisning) {
     return (
@@ -53,6 +60,7 @@ function EditorPage() {
   }
 
   return (
+    <NoterNavProvider>
     <Tabs
       value={activeSection}
       onValueChange={setActiveSection}
@@ -77,13 +85,21 @@ function EditorPage() {
           appBarSlot,
         )}
 
-      {/* Delad yta: redigeringspanel (enda scroll-containern) + preview + todo. */}
+      {/* Delad yta: notträd (vänster, bara på noter-fliken) + redigeringspanel
+          (enda scroll-containern) + preview + todo. */}
       <div className="flex min-h-0 flex-1">
+        {activeSection === "noter" && (
+          <NoterTreeSidebar
+            collapsed={noterTreeCollapsed}
+            onCollapsedChange={setNoterTreeCollapsed}
+          />
+        )}
+
         {/* Relativ wrapper så FAB:arna flyter över redigeringsytan (inte över
             todo-rail:en) och står stilla medan innehållet scrollar. */}
         <div className="relative min-h-0 flex-1">
           <div className="absolute inset-0 overflow-y-auto">
-            <div className="mx-auto max-w-3xl px-6 pb-28 pt-6">
+            <div className="mx-auto max-w-5xl px-6 pb-28 pt-6">
               <TabsContent value="grunduppgifter">
                 <EditGrunduppgifter />
               </TabsContent>
@@ -119,21 +135,14 @@ function EditorPage() {
             </Button>
             <Button
               className="pointer-events-auto h-12 rounded-full px-5 shadow-raised"
-              onClick={() =>
-                navigate({
-                  to: "/fardigstall/$step",
-                  params: { step: "paminnelse" },
-                })
-              }
+              onClick={() => setFinalizeOpen(true)}
             >
               <FileCheck /> Färdigställ inför årsstämma
             </Button>
             <Button
               variant="secondary"
               className="pointer-events-auto h-12 rounded-full px-5 shadow-raised"
-              onClick={() =>
-                navigate({ to: "/skicka-in/$step", params: { step: "filer" } })
-              }
+              onClick={() => setSendOpen(true)}
             >
               <Send /> Skicka in till Bolagsverket
             </Button>
@@ -147,6 +156,10 @@ function EditorPage() {
           onCollapsedChange={setTodoCollapsed}
         />
       </div>
+
+      <FinalizeWizardDialog open={finalizeOpen} onOpenChange={setFinalizeOpen} />
+      <SendWizardDialog open={sendOpen} onOpenChange={setSendOpen} />
     </Tabs>
+    </NoterNavProvider>
   );
 }

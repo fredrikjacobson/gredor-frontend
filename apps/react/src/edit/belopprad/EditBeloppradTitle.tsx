@@ -1,8 +1,14 @@
+import { Info } from "lucide-react";
 import type { Belopprad } from "@/model/arsredovisning/Belopprad.ts";
 import { getTaxonomyItemForBelopprad } from "@/model/arsredovisning/Belopprad.ts";
 import { isPercentageTaxonomyItem } from "@/util/renderUtils.ts";
 import { cn } from "@/lib/utils.ts";
 import { useBeloppradEdit } from "@/edit/belopprad/BeloppradEditContext.ts";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip.tsx";
 
 /** Port av BaseEditBeloppradTitle.vue — radrubriken med nivå-/summa-stilar. */
 export function EditBeloppradTitle({
@@ -39,12 +45,20 @@ export function EditBeloppradTitle({
         )}
       </span>
       {taxonomyItem.properties.documentation && (
-        <span
-          title={taxonomyItem.properties.documentation}
-          className="inline-flex size-4 shrink-0 cursor-help items-center justify-center rounded-full bg-info text-[10px] font-bold text-white"
-        >
-          i
-        </span>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              aria-label="Visa förklaring"
+              className="inline-flex size-5 shrink-0 items-center justify-center rounded-full text-ink-light transition-colors hover:bg-surface-dark hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            >
+              <Info className="size-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-xs text-left leading-snug">
+            {taxonomyItem.properties.documentation}
+          </TooltipContent>
+        </Tooltip>
       )}
     </div>
   );

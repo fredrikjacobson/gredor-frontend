@@ -269,6 +269,7 @@ function TidigareRakenskapsar({
       <label className="flex items-center gap-2 text-sm text-ink">
         <input
           type="checkbox"
+          className="size-4 accent-primary"
           checked={active}
           onChange={(e) =>
             edit((ar) => {

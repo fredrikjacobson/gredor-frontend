@@ -12,6 +12,15 @@
 @import "$fonts/freesans/FreeSans.css";
 
 /*
+ * UI-typsnittet Inter. --font-sans nedan pekar på InterVariable men filen
+ * importerades tidigare aldrig, så hela gränssnittet föll tillbaka på systemets
+ * standardtypsnitt. Måste importeras (inte bara refereras) — samma skäl som
+ * dokumenttypsnitten ovan. Endast app-chrome använder Inter; det inskickade
+ * dokumentet är opåverkat (dess CSS samlas separat).
+ */
+@import "$fonts/inter/inter.css";
+
+/*
  * Gredors designtokens portade från src/assets/_variables.scss i Vue-appen.
  * Tailwind v4 CSS-first: @theme exponerar dem som utility-klasser (bg-primary,
  * text-secondary, rounded-lg, ...) och som CSS-variabler (--color-primary).
@@ -23,10 +32,15 @@
   --color-secondary: #8a5555;
   --color-secondary-light: #b57373;
 
-  --color-danger: #dc3545;
-  --color-success: #28a745;
-  --color-warning: #ffc107;
-  --color-info: #007bff;
+  /*
+   * Semantiska färger, tonade mot Gredors palett (bort från Bootstraps råa
+   * standardhex). Mättnaden är nedtonad så de samspelar med den olivgröna
+   * primärfärgen i stället för att skrika.
+   */
+  --color-danger: #b4453f;
+  --color-success: #4f7a3f;
+  --color-warning: #c9922e;
+  --color-info: #4a6785;
 
   --color-ink: #333333;
   --color-ink-medium: #666666;
@@ -48,8 +62,9 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-raised: 0 0.5rem 1rem rgba(0, 0, 0, 0.12);
+  /* Mjuk, skiktad skugga i två steg för att ge korten djup utan hårda kanter. */
+  --shadow-card: 0 1px 2px rgba(45, 55, 35, 0.04), 0 1px 3px rgba(45, 55, 35, 0.06);
+  --shadow-raised: 0 4px 12px rgba(45, 55, 35, 0.1), 0 2px 4px rgba(45, 55, 35, 0.06);
 }
 
 /*
@@ -125,6 +140,9 @@
     font-family: var(--font-sans);
     font-weight: 400;
     line-height: 1.5;
+    /* Inter: aktivera contextual alternates + optisk storleksanpassning. */
+    font-feature-settings: "cv11", "ss01";
+    font-optical-sizing: auto;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

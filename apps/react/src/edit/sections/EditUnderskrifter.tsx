@@ -4,6 +4,8 @@ import { useArsredovisningStore } from "@/stores/arsredovisningStore.ts";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import { Alert, AlertDescription } from "@/components/ui/alert.tsx";
+import { Card, CardContent } from "@/components/ui/card.tsx";
 import { EditGroup } from "@/edit/EditGroup.tsx";
 import { ScrollspySection, type ScrollspyGroup } from "@/edit/ScrollspySection.tsx";
 
@@ -14,10 +16,10 @@ const UNDERSKRIFTER_GROUPS: ScrollspyGroup[] = [
 
 function InfoAlert({ children }: { children: ReactNode }) {
   return (
-    <div className="flex gap-2 rounded-md border border-info/30 bg-info/10 p-3 text-sm text-ink">
-      <Info className="mt-0.5 size-4 shrink-0 text-info" />
-      <span>{children}</span>
-    </div>
+    <Alert variant="info">
+      <Info />
+      <AlertDescription>{children}</AlertDescription>
+    </Alert>
   );
 }
 
@@ -97,11 +99,8 @@ export function EditUnderskrifter() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           {redovisningsinformation.underskrifter.map((underskrift, index) => (
-            <div
-              key={index}
-              className="rounded-lg border border-line bg-surface-medium p-4"
-            >
-              <div className="space-y-3">
+            <Card key={index} className="gap-0 py-4">
+              <CardContent className="space-y-3 px-4">
                 <Field label="Tilltalsnamn" htmlFor={`tilltalsnamn${index}`}>
                   <Input
                     id={`tilltalsnamn${index}`}
@@ -186,8 +185,8 @@ export function EditUnderskrifter() {
                 >
                   <Trash2 className="size-4" /> Ta bort person
                 </Button>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
 

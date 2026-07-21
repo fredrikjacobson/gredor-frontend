@@ -2,8 +2,16 @@ export interface TodoList {
   items: TodoListItem[];
 }
 
+/**
+ * Typ/kategori för en att-åtgärda-post, så listan kan grupperas per typ.
+ * `import` = varningar från bokförings-/SIE-import, `validation` = fel/varningar
+ * från Bolagsverkets kontroller, `info` = övriga meddelanden.
+ */
+export type TodoListItemType = "import" | "validation" | "info";
+
 export interface TodoListItem {
   id: string; // t.ex. "sie-import"
+  type?: TodoListItemType; // saknas på äldre sparade utkast → behandlas som "info"
   arsredovisningId?: string; // För att koppla objektet till en specifik årsredovisning
   title: string;
   description?: string;
