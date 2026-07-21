@@ -21,6 +21,11 @@ if (import.meta.env.DEV) {
         useArsredovisningStore;
     },
   );
+  void import("@/stores/flowStore.ts").then(({ useFlowStore }) => {
+    (window as unknown as { __gredorFlow?: unknown }).__gredorFlow =
+      useFlowStore;
+  });
+  (window as unknown as { __gredorRouter?: unknown }).__gredorRouter = router;
 }
 
 createRoot(document.getElementById("app")!).render(

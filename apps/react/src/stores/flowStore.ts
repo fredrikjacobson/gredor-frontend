@@ -37,22 +37,31 @@ interface FlowState {
   ixbrl: string | null;
   /** Om BankID-inloggningen är klar. */
   bankIdVerified: boolean;
+  /**
+   * Räknare som bumpas vid varje in-place-redigering av årsredovisningen (t.ex.
+   * fastställelseintyget) — komponenter prenumererar på den för omrendering,
+   * precis som arsredovisningStore.revision.
+   */
+  revision: number;
 
   setArsredovisning: (arsredovisning: Arsredovisning) => void;
   setPersonalNumber: (value: string) => void;
   setNotificationEmail: (value: string) => void;
   setIxbrl: (ixbrl: string | null) => void;
   setBankIdVerified: (verified: boolean) => void;
+  /** Muterar flödets årsredovisning in-place (som Vue; inga setters) + bumpar revision. */
+  editArsredovisning: (mutator: (arsredovisning: Arsredovisning) => void) => void;
   /** Nollställ flödet (behåller personnummer/e-post i sessionStorage). */
   reset: () => void;
 }
 
-export const useFlowStore = create<FlowState>((set) => ({
+export const useFlowStore = create<FlowState>((set, get) => ({
   arsredovisning: null,
   personalNumber: readSession(PERSONAL_NUMBER_KEY),
   notificationEmail: readSession(NOTIFICATION_EMAIL_KEY),
   ixbrl: null,
   bankIdVerified: false,
+  revision: 0,
 
   setArsredovisning: (arsredovisning) => set({ arsredovisning }),
   setPersonalNumber: (value) => {
@@ -65,6 +74,17 @@ export const useFlowStore = create<FlowState>((set) => ({
   },
   setIxbrl: (ixbrl) => set({ ixbrl }),
   setBankIdVerified: (bankIdVerified) => set({ bankIdVerified }),
+  editArsredovisning: (mutator) => {
+    const { arsredovisning } = get();
+    if (!arsredovisning) return;
+    mutator(arsredovisning);
+    set((s) => ({ revision: s.revision + 1 }));
+  },
   reset: () =>
-    set({ arsredovisning: null, ixbrl: null, bankIdVerified: false }),
+    set({
+      arsredovisning: null,
+      ixbrl: null,
+      bankIdVerified: false,
+      revision: 0,
+    }),
 }));

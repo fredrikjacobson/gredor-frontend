@@ -14,6 +14,14 @@ import {
 import { cn } from "@/lib/utils.ts";
 import { StepFiler } from "@/flows/send/steps/StepFiler.tsx";
 import { StepInformation } from "@/flows/send/steps/StepInformation.tsx";
+import { StepBankId } from "@/flows/send/steps/StepBankId.tsx";
+import { StepBolagsverketAgreement } from "@/flows/send/steps/StepBolagsverketAgreement.tsx";
+import { StepGredorAgreement } from "@/flows/send/steps/StepGredorAgreement.tsx";
+import { StepBekrafta } from "@/flows/send/steps/StepBekrafta.tsx";
+import { StepFaststallelseintyg } from "@/flows/send/steps/StepFaststallelseintyg.tsx";
+import { StepGenerera } from "@/flows/send/steps/StepGenerera.tsx";
+import { StepGranska } from "@/flows/send/steps/StepGranska.tsx";
+import { StepKlart } from "@/flows/send/steps/StepKlart.tsx";
 import type { SendStepProps } from "@/flows/send/steps/StepProps.ts";
 
 export const Route = createFileRoute("/skicka-in/$step")({
@@ -107,6 +115,22 @@ function renderStep(step: string, props: SendStepProps): ReactNode {
       return <StepFiler {...props} />;
     case "information":
       return <StepInformation {...props} />;
+    case "bankid":
+      return <StepBankId {...props} />;
+    case "bolagsverket-avtal":
+      return <StepBolagsverketAgreement {...props} />;
+    case "faststallelseintyg":
+      return <StepFaststallelseintyg {...props} />;
+    case "generera":
+      return <StepGenerera {...props} />;
+    case "granska":
+      return <StepGranska {...props} />;
+    case "gredor-avtal":
+      return <StepGredorAgreement {...props} />;
+    case "bekrafta":
+      return <StepBekrafta {...props} />;
+    case "klart":
+      return <StepKlart {...props} />;
     default:
       return (
         <div>
