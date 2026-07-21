@@ -1,0 +1,117 @@
+/*
+ * Stilar för belopprad-redigeringstabellerna (RR/BR/Noter/FB). Portade från de
+ * scoped stilarna i BaseEditBeloppradTitle.vue m.fl. Scopade under
+ * .edit-belopprad-table för att inte läcka in i övrig app-chrome.
+ */
+.edit-belopprad-table {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-ink-medium);
+    text-align: left;
+    vertical-align: bottom;
+    padding: 0.25rem 0.5rem 0.75rem;
+  }
+
+  td {
+    text-align: left;
+    vertical-align: bottom;
+    padding: 0.2rem 0.5rem;
+
+    &:first-child {
+      width: 99%;
+    }
+  }
+
+  .not-container {
+    text-align: center;
+    min-width: 3.5rem;
+  }
+
+  .value-container {
+    text-align: right;
+    min-width: 7.5rem;
+  }
+
+  // Inmatningsfält
+  .belopprad-input {
+    height: 2rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface-input);
+    padding: 0 0.4rem;
+    font-size: 0.85rem;
+    color: var(--color-ink);
+
+    &:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 0;
+    }
+
+    &:disabled {
+      background-color: var(--color-surface-medium);
+      color: var(--color-ink-light);
+    }
+  }
+
+  .value-container .belopprad-input {
+    width: 6.5rem;
+  }
+
+  .not-container .belopprad-input {
+    width: 3rem;
+    text-align: center;
+  }
+
+  // Radhover (ej abstrakta rubriker)
+  .belopprad-row:not(.is-abstract):hover {
+    background-color: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  }
+
+  // Rubrik-nivåstilar (från BaseEditBeloppradTitle.vue)
+  .belopprad-title {
+    color: var(--color-ink);
+  }
+
+  .belopprad-title.is-abstract.is-level-1,
+  .belopprad-title.is-string.is-level-1 {
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+
+  .belopprad-title.is-abstract.is-level-2 {
+    font-weight: 600;
+    text-decoration: underline;
+    color: var(--color-ink-medium);
+  }
+
+  .belopprad-title.is-abstract.is-level-3 {
+    font-weight: 500;
+    color: var(--color-ink-medium);
+  }
+
+  .belopprad-title.is-abstract.is-level-4 {
+    font-weight: 400;
+    text-decoration: underline;
+    color: var(--color-ink-medium);
+  }
+
+  .belopprad-title.is-summa.is-level-1 {
+    font-weight: 600;
+    font-style: italic;
+  }
+
+  .belopprad-title.is-summa.is-level-2 {
+    font-weight: 600;
+  }
+
+  .belopprad-title.is-summa.is-level-3 {
+    font-weight: 500;
+    color: var(--color-ink-medium);
+  }
+}

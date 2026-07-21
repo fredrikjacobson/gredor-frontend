@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { useArsredovisningStore } from "@/stores/arsredovisningStore.ts";
 import { ArsredovisningPreview } from "@/render/ArsredovisningPreview.tsx";
 import { EditGrunduppgifter } from "@/edit/sections/EditGrunduppgifter.tsx";
+import { EditResultatrakning } from "@/edit/sections/EditResultatrakning.tsx";
 
 export const Route = createFileRoute("/redigera")({
   component: EditorPage,
@@ -85,6 +86,8 @@ function EditorPage() {
         <div>
           {activeSection === "grunduppgifter" ? (
             <EditGrunduppgifter />
+          ) : activeSection === "resultatrakning" ? (
+            <EditResultatrakning />
           ) : (
             <section className="rounded-lg border border-line bg-surface p-6 shadow-card">
               <h2 className="mb-1 text-lg font-semibold text-ink">
