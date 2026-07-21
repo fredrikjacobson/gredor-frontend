@@ -1,3 +1,7 @@
 dist
 src/routeTree.gen.ts
 public/devfixtures
+
+# Playwright
+test-results/
+playwright-report/

@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "npm run generate -w @gredor/domain && vite build",
     "preview": "vite preview --port 4174",
-    "type-check": "tsc --noEmit -p tsconfig.json"
+    "type-check": "tsc --noEmit -p tsconfig.json",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@gredor/domain": "*",
@@ -30,6 +31,7 @@
     "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/vite": "^4.0.0",
     "@tanstack/router-plugin": "^1.95.0",
     "@types/react": "^19.1.0",
