@@ -7,12 +7,15 @@ import {
 
 /** Port av RenderBeloppradOtherComparable.vue — icke-monetära jämförbara värden. */
 export function RenderBeloppradOtherComparable(
-  props: RenderBeloppradComparablePropsBase<BaseBeloppradComparable>,
+  props: RenderBeloppradComparablePropsBase<BaseBeloppradComparable> & {
+    /** Antal jämförelseår (från RenderBelopprad); default 1. Se RenderBeloppradMonetary. */
+    numPreviousYears?: number;
+  },
 ) {
   return (
     <BaseRenderBeloppradComparable
       {...props}
-      numPreviousYears={1}
+      numPreviousYears={props.numPreviousYears ?? 1}
       unit={isPercentageBelopprad(props.belopprad) ? "%" : undefined}
     />
   );

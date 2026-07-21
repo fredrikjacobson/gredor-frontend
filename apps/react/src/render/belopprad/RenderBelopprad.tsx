@@ -92,6 +92,7 @@ export function RenderBelopprad(props: {
         }
         displayFormat={props.displayFormat ?? BeloppFormat.HELTAL}
         displayHeader={props.displayHeader}
+        numPreviousYears={props.comparableNumPreviousYears ?? 1}
         redovisningsvaluta={props.redovisningsvaluta}
         showBalanceSign={props.monetaryShowBalanceSign ?? false}
       />
@@ -108,6 +109,9 @@ export function RenderBelopprad(props: {
       props.comparableDisplayAsType ?? RenderBeloppradDisplayAsType.AUTO,
     displayFormat: props.displayFormat ?? BeloppFormat.HELTAL,
     displayHeader: props.displayHeader,
+    // Vidarebefordra jämförelseår (RR/BR=1, flerårsöversikt=3) — som Vues
+    // fallthrough-attribut. Default 1 när inget anges.
+    numPreviousYears: props.comparableNumPreviousYears ?? 1,
   };
 
   if (isBeloppradEnum(belopprad)) {

@@ -7,12 +7,15 @@ import { RenderBeloppradCellEnum } from "@/render/belopprad/RenderBeloppradCellE
 
 /** Port av RenderBeloppradEnum.vue — vallistebelopprad. */
 export function RenderBeloppradEnum(
-  props: RenderBeloppradComparablePropsBase<BeloppradEnum>,
+  props: RenderBeloppradComparablePropsBase<BeloppradEnum> & {
+    /** Antal jämförelseår (från RenderBelopprad); default 1. Se RenderBeloppradMonetary. */
+    numPreviousYears?: number;
+  },
 ) {
   return (
     <BaseRenderBeloppradComparable
       {...props}
-      numPreviousYears={1}
+      numPreviousYears={props.numPreviousYears ?? 1}
       renderCell={(taxonomyItem, yearIndex) => (
         <RenderBeloppradCellEnum
           additionalIxbrlAttrs={props.additionalIxbrlAttrs}

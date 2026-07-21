@@ -11,6 +11,12 @@ export function RenderBeloppradMonetary(
   props: RenderBeloppradComparablePropsBase<BeloppradMonetary> & {
     redovisningsvaluta: Redovisningsvaluta;
     showBalanceSign: boolean;
+    /**
+     * Antal jämförelseår. Vue passerar detta som fallthrough-attribut från
+     * RenderBelopprad (dispatcherns comparableNumPreviousYears) och det
+     * åsidosätter mallens default. RR/BR skickar 1, flerårsöversikten 3.
+     */
+    numPreviousYears?: number;
   },
 ) {
   const unit =
@@ -21,7 +27,7 @@ export function RenderBeloppradMonetary(
   return (
     <BaseRenderBeloppradComparable
       {...props}
-      numPreviousYears={1}
+      numPreviousYears={props.numPreviousYears ?? 1}
       unit={unit}
     />
   );
