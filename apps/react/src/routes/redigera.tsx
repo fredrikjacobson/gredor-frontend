@@ -9,6 +9,7 @@ import { EditResultatrakning } from "@/edit/sections/EditResultatrakning.tsx";
 import { EditBalansrakning } from "@/edit/sections/EditBalansrakning.tsx";
 import { EditUnderskrifter } from "@/edit/sections/EditUnderskrifter.tsx";
 import { EditNoter } from "@/edit/sections/EditNoter.tsx";
+import { EditForvaltningsberattelse } from "@/edit/sections/EditForvaltningsberattelse.tsx";
 
 export const Route = createFileRoute("/redigera")({
   component: EditorPage,
@@ -89,6 +90,8 @@ function EditorPage() {
         <div>
           {activeSection === "grunduppgifter" ? (
             <EditGrunduppgifter />
+          ) : activeSection === "forvaltningsberattelse" ? (
+            <EditForvaltningsberattelse />
           ) : activeSection === "resultatrakning" ? (
             <EditResultatrakning />
           ) : activeSection === "balansrakning" ? (

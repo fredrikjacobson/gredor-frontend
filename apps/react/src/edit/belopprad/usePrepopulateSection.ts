@@ -39,6 +39,8 @@ export function usePrepopulateSection(args: {
   const poolRef = useRef<{
     ar: Arsredovisning;
     tm: TaxonomyManager;
+    available: TaxonomyItem;
+    maxNumPreviousYears: number;
     pool: Belopprad[];
   } | null>(null);
 
@@ -56,11 +58,15 @@ export function usePrepopulateSection(args: {
   if (
     !poolRef.current ||
     poolRef.current.ar !== arsredovisning ||
-    poolRef.current.tm !== taxonomyManager
+    poolRef.current.tm !== taxonomyManager ||
+    poolRef.current.available !== availableTaxonomyItems ||
+    poolRef.current.maxNumPreviousYears !== maxNumPreviousYears
   ) {
     poolRef.current = {
       ar: arsredovisning,
       tm: taxonomyManager,
+      available: availableTaxonomyItems,
+      maxNumPreviousYears,
       pool: buildPool(
         taxonomyManager,
         availableTaxonomyItems,
