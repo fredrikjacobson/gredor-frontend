@@ -6,6 +6,8 @@ import {
 } from "@/model/arsredovisning/Belopprad.ts";
 import { RenderBeloppradDisplayAsType } from "@/render/belopprad/RenderBeloppradDisplayAsType.ts";
 import { RenderBelopprad } from "@/render/belopprad/RenderBelopprad.tsx";
+import { RenderForvaltningsberattelseFlerarsoversikt } from "@/render/sections/forvaltningsberattelse/RenderForvaltningsberattelseFlerarsoversikt.tsx";
+import { RenderForvaltningsberattelseForandringar } from "@/render/sections/forvaltningsberattelse/RenderForvaltningsberattelseForandringar.tsx";
 
 /**
  * Port av RenderForvaltningsberattelse.vue. De vanliga grupperna (t.ex.
@@ -69,18 +71,25 @@ export function RenderForvaltningsberattelse(props: {
     <div>
       <h2>Förvaltningsberättelse</h2>
       {groups.map(({ group, items }, groupIndex) => {
-        const isTupleGroup =
-          group.xmlName === "se-gen-base:Flerarsoversikt" ||
-          group.xmlName === "se-gen-base:ForandringEgetKapital";
-
-        if (isTupleGroup) {
+        if (group.xmlName === "se-gen-base:Flerarsoversikt") {
           return (
-            <div
-              key={groupIndex}
-              className="group-container text-sm italic text-ink-light"
-            >
-              [{group.additionalData.displayLabel} — tuple-baserad, porteras
-              härnäst]
+            <div key={groupIndex} className="group-container">
+              <RenderForvaltningsberattelseFlerarsoversikt
+                arsredovisning={arsredovisning}
+                groupTaxonomyItem={group}
+                taxonomyManager={taxonomyManager}
+              />
+            </div>
+          );
+        }
+
+        if (group.xmlName === "se-gen-base:ForandringEgetKapital") {
+          return (
+            <div key={groupIndex} className="group-container">
+              <RenderForvaltningsberattelseForandringar
+                arsredovisning={arsredovisning}
+                taxonomyManager={taxonomyManager}
+              />
             </div>
           );
         }

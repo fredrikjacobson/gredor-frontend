@@ -214,6 +214,38 @@
     padding: 0 !important;
   }
 
+  // RenderForvaltningsberattelseForandringar.vue (scoped)
+  .forandringar-table {
+    th.column-name {
+      white-space: normal !important;
+    }
+
+    &.num-columns-6 {
+      font-size: 0.85rem;
+      .value-container {
+        min-width: 85px !important;
+      }
+    }
+    &.num-columns-7 {
+      font-size: 0.7rem;
+      .value-container {
+        min-width: 70px !important;
+      }
+    }
+    &.num-columns-8 {
+      font-size: 0.62rem;
+      .value-container {
+        min-width: 62px !important;
+      }
+    }
+    &.num-columns-9 {
+      font-size: 0.55rem;
+      .value-container {
+        min-width: 55px !important;
+      }
+    }
+  }
+
   // RenderNoter.vue (scoped)
   .noter h3 {
     margin-bottom: 0;
