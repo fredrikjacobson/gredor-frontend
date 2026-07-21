@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { CheckCircle2, Circle, Send } from "lucide-react";
+import { CheckCircle2, Circle, FileCheck, Send } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { TodoPanel } from "@/edit/TodoPanel.tsx";
 import { useArsredovisningStore } from "@/stores/arsredovisningStore.ts";
@@ -78,10 +78,18 @@ function EditorPage() {
         <li>
           <Button
             size="sm"
+            onClick={() => navigate({ to: "/fardigstall/$step", params: { step: "paminnelse" } })}
+          >
+            <FileCheck className="size-4" /> Färdigställ inför årsstämma
+          </Button>
+        </li>
+        <li>
+          <Button
+            size="sm"
             variant="secondary"
             onClick={() => navigate({ to: "/skicka-in/$step", params: { step: "filer" } })}
           >
-            <Send className="size-4" /> Färdigställ &amp; skicka in
+            <Send className="size-4" /> Skicka in till Bolagsverket
           </Button>
         </li>
       </ol>
