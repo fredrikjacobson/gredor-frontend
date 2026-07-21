@@ -11,6 +11,7 @@ import { formatEnumValueDisplayLabel } from "@/util/formatUtils.ts";
 import { useBeloppradEdit } from "@/edit/belopprad/BeloppradEditContext.ts";
 import { EditBeloppradComparableRow } from "@/edit/belopprad/EditBeloppradComparableRow.tsx";
 import { EditBeloppradString } from "@/edit/belopprad/EditBeloppradString.tsx";
+import { EditBeloppradTuple } from "@/edit/belopprad/EditBeloppradTuple.tsx";
 
 export interface EditBeloppradProps {
   belopprad: Belopprad;
@@ -62,6 +63,7 @@ export function EditBelopprad(props: EditBeloppradProps) {
         belopprad={belopprad}
         displayAsLevel={props.displayAsLevel}
         numPreviousYears={numPreviousYears}
+        valueColspan={props.valueColspanOverride}
         allowNot={props.comparableAllowNot}
         allowDelete={props.allowDelete}
         isSummarad={taxonomyItem.additionalData.isCalculatedItem}
@@ -91,6 +93,7 @@ export function EditBelopprad(props: EditBeloppradProps) {
         belopprad={belopprad}
         displayAsLevel={props.displayAsLevel}
         numPreviousYears={numPreviousYears}
+        valueColspan={props.valueColspanOverride}
         allowNot={props.comparableAllowNot}
         allowDelete={props.allowDelete}
         onDelete={props.onDelete}
@@ -122,6 +125,7 @@ export function EditBelopprad(props: EditBeloppradProps) {
         belopprad={belopprad}
         displayAsLevel={props.displayAsLevel}
         numPreviousYears={numPreviousYears}
+        valueColspan={props.valueColspanOverride}
         allowNot={props.comparableAllowNot}
         allowDelete={props.allowDelete}
         allowedValueRegex={
@@ -135,8 +139,12 @@ export function EditBelopprad(props: EditBeloppradProps) {
   }
 
   if (isBeloppradTuple(belopprad)) {
-    // Tuples porteras i Noter/FB-inkrementet. RR/BR har inga tuples.
-    return null;
+    return (
+      <EditBeloppradTuple
+        belopprad={belopprad}
+        comparableNumPreviousYears={numPreviousYears}
+      />
+    );
   }
 
   return null;

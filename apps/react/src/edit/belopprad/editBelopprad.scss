@@ -114,4 +114,17 @@
     font-weight: 500;
     color: var(--color-ink-medium);
   }
+
+  // Nästlade tuple-instanstabeller
+  table.edit-tuple-instance {
+    width: auto;
+
+    td:first-child {
+      width: auto;
+    }
+
+    .value-container .belopprad-input {
+      width: 8rem;
+    }
+  }
 }

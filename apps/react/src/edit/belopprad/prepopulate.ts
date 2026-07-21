@@ -90,18 +90,22 @@ export function recalculateSums(
 }
 
 /**
- * Gruppera poolen i sektioner (t.ex. balansräkningens Tillgångar /
- * Eget kapital och skulder). Port av groupPrepopulatedSection. Varje grupp är en
- * lista taxonomiobjekt; en belopprad hamnar i första gruppen den matchar.
+ * Gruppera poolen i sektioner. Port av groupPrepopulatedSection: `groups` kan
+ * vara TaxonomyItem[] (varje grupp expanderas till [group, ...childrenFlat], som
+ * i noter) eller TaxonomyItem[][] (explicita listor, som i balansräkningen). En
+ * belopprad hamnar i första gruppen den matchar.
  */
 export function groupPool(
   pool: Belopprad[],
-  groups: TaxonomyItem[][],
+  groups: TaxonomyItem[] | TaxonomyItem[][],
 ): Belopprad[][] {
+  const taxonomyItemsPerGroup: TaxonomyItem[][] = groups.map((group) =>
+    Array.isArray(group) ? group : [group, ...group.childrenFlat],
+  );
   const result: Belopprad[][] = groups.map(() => []);
   for (const belopprad of pool) {
     for (let i = 0; i < groups.length; i++) {
-      if (isBeloppradInTaxonomyItemList(groups[i], belopprad)) {
+      if (isBeloppradInTaxonomyItemList(taxonomyItemsPerGroup[i], belopprad)) {
         result[i].push(belopprad);
         break;
       }

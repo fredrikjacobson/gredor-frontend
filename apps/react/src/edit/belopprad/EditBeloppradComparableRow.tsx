@@ -19,6 +19,7 @@ export function EditBeloppradComparableRow({
   belopprad,
   displayAsLevel,
   numPreviousYears,
+  valueColspan,
   allowNot,
   allowDelete,
   isSummarad,
@@ -31,6 +32,7 @@ export function EditBeloppradComparableRow({
   belopprad: BaseBeloppradComparable;
   displayAsLevel?: number;
   numPreviousYears: number;
+  valueColspan?: number;
   allowNot?: boolean;
   allowDelete?: boolean;
   isSummarad?: boolean;
@@ -104,7 +106,7 @@ export function EditBeloppradComparableRow({
         </td>
       )}
 
-      <td className="value-container">
+      <td className="value-container" colSpan={valueColspan}>
         <div className="flex items-center justify-end gap-1">
           {renderCurrentYear ? (
             renderCurrentYear(taxonomyItem)
