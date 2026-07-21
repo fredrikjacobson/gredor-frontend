@@ -143,4 +143,100 @@
     font-size: 1.4rem;
     margin: 0;
   }
+
+  // Tuple-tabeller (RenderBeloppradTupleSimple/Comparison, scoped i Vue)
+  .render-tuple .render-tuple-instance {
+    margin-bottom: 0.5rem;
+  }
+
+  table.render-tuple-instance {
+    margin-top: 0 !important;
+    margin-left: 1.5rem;
+    width: auto !important;
+
+    th {
+      white-space: nowrap;
+    }
+
+    th,
+    td {
+      padding-right: 3rem !important;
+
+      &.numeric {
+        text-align: right;
+      }
+    }
+
+    th:first-child,
+    td:first-child {
+      width: unset !important;
+    }
+
+    @for $i from 4 through 5 {
+      &.num-columns-#{$i} {
+        th,
+        td {
+          padding-right: calc((6 - #{$i}) * 1rem) !important;
+        }
+      }
+    }
+
+    @for $i from 6 through 10 {
+      &.num-columns-#{$i} {
+        th,
+        td {
+          padding-right: 0 !important;
+        }
+      }
+    }
+
+    &.num-columns-5 {
+      font-size: 0.925rem;
+    }
+    &.num-columns-6 {
+      font-size: 0.85rem;
+    }
+    &.num-columns-7 {
+      font-size: 0.7rem;
+    }
+    &.num-columns-8 {
+      font-size: 0.62rem;
+    }
+    &.num-columns-9 {
+      font-size: 0.55rem;
+    }
+    &.num-columns-10 {
+      font-size: 0.5rem;
+    }
+  }
+
+  td.render-tuple {
+    padding: 0 !important;
+  }
+
+  // RenderNoter.vue (scoped)
+  .noter h3 {
+    margin-bottom: 0;
+    font-size: 1.1rem;
+  }
+
+  .noter-table {
+    margin-bottom: 2rem;
+
+    .level-2 .header {
+      text-decoration: underline;
+    }
+    .level-2 td {
+      padding-bottom: 0 !important;
+    }
+    .level-3 .header {
+      font-weight: 500;
+    }
+  }
+
+  .render-tuple-instance + .rubrik,
+  td > .rubrik {
+    font-style: italic;
+    margin-bottom: 0.5rem;
+  }
 }

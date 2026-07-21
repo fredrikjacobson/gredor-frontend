@@ -10,11 +10,17 @@ import { initArsredovisningPersistence } from "@/stores/arsredovisningStore.ts";
 // Koppla in autospar-persistensen (samma localStorage-nycklar som Vue-appen).
 initArsredovisningPersistence();
 
-// Dev-hjälp: exponera UI-storen på window för manuell testning (bort i prod).
+// Dev-hjälp: exponera stores på window för manuell testning (bort i prod).
 if (import.meta.env.DEV) {
   void import("@/stores/uiStore.ts").then(({ useUiStore }) => {
     (window as unknown as { __gredorUi?: unknown }).__gredorUi = useUiStore;
   });
+  void import("@/stores/arsredovisningStore.ts").then(
+    ({ useArsredovisningStore }) => {
+      (window as unknown as { __gredorAr?: unknown }).__gredorAr =
+        useArsredovisningStore;
+    },
+  );
 }
 
 createRoot(document.getElementById("app")!).render(

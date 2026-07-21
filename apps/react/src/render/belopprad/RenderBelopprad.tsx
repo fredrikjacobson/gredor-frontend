@@ -2,6 +2,7 @@ import { isBeloppradMonetary } from "@/model/arsredovisning/beloppradtyper/Belop
 import { isBeloppradString } from "@/model/arsredovisning/beloppradtyper/BeloppradString.ts";
 import { isBeloppradEnum } from "@/model/arsredovisning/beloppradtyper/BeloppradEnum.ts";
 import { isBeloppradComparable } from "@/model/arsredovisning/beloppradtyper/BaseBeloppradComparable.ts";
+import { isBeloppradTuple } from "@/model/arsredovisning/beloppradtyper/BeloppradTuple.ts";
 import {
   type Belopprad,
   getTaxonomyItemForBelopprad,
@@ -15,6 +16,7 @@ import { RenderBeloppradMonetary } from "@/render/belopprad/RenderBeloppradMonet
 import { RenderBeloppradString } from "@/render/belopprad/RenderBeloppradString.tsx";
 import { RenderBeloppradEnum } from "@/render/belopprad/RenderBeloppradEnum.tsx";
 import { RenderBeloppradOtherComparable } from "@/render/belopprad/RenderBeloppradOtherComparable.tsx";
+import { RenderBeloppradTuple } from "@/render/belopprad/RenderBeloppradTuple.tsx";
 
 /**
  * Wrapper som väljer rätt belopprads-komponent efter typ — port av
@@ -39,6 +41,23 @@ export function RenderBelopprad(props: {
 }) {
   const { taxonomyManager, belopprad } = props;
   const additionalIxbrlAttrs = props.additionalIxbrlAttrs ?? {};
+
+  // Tuple-belopprader har varken duration/instant-periodType, så deras
+  // contextRefPrefix ska inte beräknas (skulle kasta "Unknown periodType").
+  // Vue-varianten undviker detta via en lazy computed; vi tar tuple-grenen
+  // före prefix-beräkningen.
+  if (isBeloppradTuple(belopprad)) {
+    return (
+      <RenderBeloppradTuple
+        taxonomyManager={taxonomyManager}
+        belopprad={belopprad}
+        redovisningsvaluta={props.redovisningsvaluta}
+        displayHeader={props.displayHeader}
+        comparableNumPreviousYears={props.comparableNumPreviousYears ?? 0}
+      />
+    );
+  }
+
   const contextRefPrefix = getContextRefPrefix(
     getTaxonomyItemForBelopprad(taxonomyManager, belopprad),
   );
@@ -101,8 +120,6 @@ export function RenderBelopprad(props: {
     );
   }
 
-  // TODO(fas 3): tuple-belopprader porteras härnäst (flerårsöversikt,
-  // förändring eget kapital, vissa noter). Tills dess renderas de inte.
   if (import.meta.env.DEV) {
     console.warn(
       `RenderBelopprad: typ ${belopprad.type} (${belopprad.taxonomyItemName}) inte porterad än`,

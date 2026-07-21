@@ -15,6 +15,7 @@ import { RenderCover } from "@/render/sections/RenderCover.tsx";
 import { RenderForvaltningsberattelse } from "@/render/sections/RenderForvaltningsberattelse.tsx";
 import { RenderResultatrakning } from "@/render/sections/RenderResultatrakning.tsx";
 import { RenderBalansrakning } from "@/render/sections/RenderBalansrakning.tsx";
+import { RenderNoter } from "@/render/sections/RenderNoter.tsx";
 import { RenderUnderskrifter } from "@/render/sections/RenderUnderskrifter.tsx";
 
 interface TaxonomyManagers {
@@ -104,6 +105,11 @@ export function ArsredovisningPreview({
       <RenderBalansrakning
         arsredovisning={arsredovisning}
         taxonomyManager={managers.balansrakning}
+      />
+      <div className="page-break"></div>
+      <RenderNoter
+        arsredovisning={arsredovisning}
+        taxonomyManager={managers.noter}
       />
       <RenderUnderskrifter arsredovisning={arsredovisning} />
     </div>
