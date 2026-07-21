@@ -12,6 +12,7 @@ import {
 } from "@/model/taxonomy/TaxonomyItem.ts";
 import { RenderIXBRLHeader } from "@/render/sections/RenderIXBRLHeader.tsx";
 import { RenderCover } from "@/render/sections/RenderCover.tsx";
+import { RenderForvaltningsberattelse } from "@/render/sections/RenderForvaltningsberattelse.tsx";
 import { RenderResultatrakning } from "@/render/sections/RenderResultatrakning.tsx";
 import { RenderBalansrakning } from "@/render/sections/RenderBalansrakning.tsx";
 import { RenderUnderskrifter } from "@/render/sections/RenderUnderskrifter.tsx";
@@ -89,6 +90,11 @@ export function ArsredovisningPreview({
         decimalUnitItems={decimalUnitItems}
       />
       <RenderCover arsredovisning={arsredovisning} showFaststallelseintyg={false} />
+      <div className="page-break"></div>
+      <RenderForvaltningsberattelse
+        arsredovisning={arsredovisning}
+        taxonomyManager={managers.forvaltningsberattelse}
+      />
       <div className="page-break"></div>
       <RenderResultatrakning
         arsredovisning={arsredovisning}

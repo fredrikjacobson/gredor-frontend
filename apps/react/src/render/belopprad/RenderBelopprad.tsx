@@ -1,5 +1,7 @@
 import { isBeloppradMonetary } from "@/model/arsredovisning/beloppradtyper/BeloppradMonetary.ts";
 import { isBeloppradString } from "@/model/arsredovisning/beloppradtyper/BeloppradString.ts";
+import { isBeloppradEnum } from "@/model/arsredovisning/beloppradtyper/BeloppradEnum.ts";
+import { isBeloppradComparable } from "@/model/arsredovisning/beloppradtyper/BaseBeloppradComparable.ts";
 import {
   type Belopprad,
   getTaxonomyItemForBelopprad,
@@ -11,6 +13,8 @@ import type { Redovisningsvaluta } from "@/model/arsredovisning/Redovisningsinfo
 import { RenderBeloppradDisplayAsType } from "@/render/belopprad/RenderBeloppradDisplayAsType.ts";
 import { RenderBeloppradMonetary } from "@/render/belopprad/RenderBeloppradMonetary.tsx";
 import { RenderBeloppradString } from "@/render/belopprad/RenderBeloppradString.tsx";
+import { RenderBeloppradEnum } from "@/render/belopprad/RenderBeloppradEnum.tsx";
+import { RenderBeloppradOtherComparable } from "@/render/belopprad/RenderBeloppradOtherComparable.tsx";
 
 /**
  * Wrapper som väljer rätt belopprads-komponent efter typ — port av
@@ -75,8 +79,30 @@ export function RenderBelopprad(props: {
     );
   }
 
-  // TODO(fas 3): enum / övrig-jämförbar / tuple porteras med balans- och
-  // not-sektionerna. Tills dess renderas de inte.
+  const comparableProps = {
+    taxonomyManager,
+    additionalIxbrlAttrs,
+    allowNot: props.comparableAllowNot ?? false,
+    contextRefPrefix,
+    displayAsLevel: props.displayAsLevel,
+    displayAsType:
+      props.comparableDisplayAsType ?? RenderBeloppradDisplayAsType.AUTO,
+    displayFormat: props.displayFormat ?? BeloppFormat.HELTAL,
+    displayHeader: props.displayHeader,
+  };
+
+  if (isBeloppradEnum(belopprad)) {
+    return <RenderBeloppradEnum {...comparableProps} belopprad={belopprad} />;
+  }
+
+  if (isBeloppradComparable(belopprad)) {
+    return (
+      <RenderBeloppradOtherComparable {...comparableProps} belopprad={belopprad} />
+    );
+  }
+
+  // TODO(fas 3): tuple-belopprader porteras härnäst (flerårsöversikt,
+  // förändring eget kapital, vissa noter). Tills dess renderas de inte.
   if (import.meta.env.DEV) {
     console.warn(
       `RenderBelopprad: typ ${belopprad.type} (${belopprad.taxonomyItemName}) inte porterad än`,
