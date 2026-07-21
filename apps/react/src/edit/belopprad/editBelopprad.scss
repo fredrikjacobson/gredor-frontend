@@ -128,3 +128,75 @@
     }
   }
 }
+
+// Förändring eget kapital-rutnätet (från EditForvaltningsberattelseForandringar.vue)
+.edit-forandringar-wrapper {
+  table.edit-forandringar-table {
+    width: min-content;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.8rem;
+
+    thead th {
+      text-align: right;
+      vertical-align: bottom;
+      padding: 0.25rem 0.5rem 0.25rem 1rem;
+      border: 1px solid #c4c4c4;
+      border-bottom-width: 3px;
+      white-space: nowrap;
+      background: var(--color-surface);
+    }
+
+    td {
+      border: 1px solid #c4c4c4;
+      padding: 0.25rem 0.5rem;
+      white-space: nowrap;
+
+      .row-label {
+        width: max-content;
+      }
+    }
+
+    th:not(:last-child),
+    td:not(:last-child) {
+      border-right: none;
+    }
+
+    tr:not(:last-child) td {
+      border-bottom: none;
+    }
+
+    td.value-cell {
+      text-align: right;
+
+      &.empty-cell {
+        background: #d9d9d9;
+      }
+
+      &.common-cell {
+        background: #e0e0ff;
+
+        .forandringar-input {
+          background: #f6f6ff;
+        }
+      }
+    }
+
+    .forandringar-input {
+      width: 100%;
+      min-width: 110px;
+      text-align: right;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-sm);
+      background: var(--color-surface-input);
+      padding: 0.15rem 0.4rem;
+      font-size: 0.8rem;
+      color: var(--color-ink);
+
+      &:focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 0;
+      }
+    }
+  }
+}

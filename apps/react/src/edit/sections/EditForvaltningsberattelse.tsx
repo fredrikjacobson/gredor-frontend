@@ -17,6 +17,7 @@ import {
   type ScrollspyGroup,
 } from "@/edit/ScrollspySection.tsx";
 import { EditForvaltningsberattelseFlerarsoversikt } from "@/edit/sections/forvaltningsberattelse/EditForvaltningsberattelseFlerarsoversikt.tsx";
+import { EditForvaltningsberattelseForandringar } from "@/edit/sections/forvaltningsberattelse/EditForvaltningsberattelseForandringar.tsx";
 
 const FLERARSOVERSIKT = "se-gen-base:Flerarsoversikt";
 const FORANDRING_EGET_KAPITAL = "se-gen-base:ForandringEgetKapital";
@@ -63,6 +64,14 @@ export function EditForvaltningsberattelse() {
     [availableTaxonomyItems],
   );
 
+  const forandringItem = useMemo(
+    () =>
+      availableTaxonomyItems?.childrenFlat.find(
+        (item) => item.xmlName === FORANDRING_EGET_KAPITAL,
+      ),
+    [availableTaxonomyItems],
+  );
+
   if (!arsredovisning || !editor || groups.length === 0) {
     return (
       <div className="rounded-lg border border-line bg-surface p-6 text-sm text-ink-light shadow-card">
@@ -97,11 +106,11 @@ export function EditForvaltningsberattelse() {
                 taxonomyManager={editor.taxonomyManager}
                 groupTaxonomyItem={flerarsoversiktItem}
               />
-            ) : group.xmlName === FORANDRING_EGET_KAPITAL ? (
-              <p className="text-sm text-ink-light">
-                Tabellen för förändring i eget kapital porteras härnäst (egen
-                rutnätseditor).
-              </p>
+            ) : group.xmlName === FORANDRING_EGET_KAPITAL && forandringItem ? (
+              <EditForvaltningsberattelseForandringar
+                taxonomyManager={editor.taxonomyManager}
+                groupTaxonomyItem={forandringItem}
+              />
             ) : (
               <div className="edit-belopprad-table">
                 <table>
