@@ -7,6 +7,7 @@ import { ArsredovisningPreview } from "@/render/ArsredovisningPreview.tsx";
 import { EditGrunduppgifter } from "@/edit/sections/EditGrunduppgifter.tsx";
 import { EditResultatrakning } from "@/edit/sections/EditResultatrakning.tsx";
 import { EditBalansrakning } from "@/edit/sections/EditBalansrakning.tsx";
+import { EditUnderskrifter } from "@/edit/sections/EditUnderskrifter.tsx";
 
 export const Route = createFileRoute("/redigera")({
   component: EditorPage,
@@ -91,6 +92,8 @@ function EditorPage() {
             <EditResultatrakning />
           ) : activeSection === "balansrakning" ? (
             <EditBalansrakning />
+          ) : activeSection === "underskrifter" ? (
+            <EditUnderskrifter />
           ) : (
             <section className="rounded-lg border border-line bg-surface p-6 shadow-card">
               <h2 className="mb-1 text-lg font-semibold text-ink">
