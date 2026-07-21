@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "react",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "-w", "@gredor/react-app"],
+      "port": 5176
+    }
+  ]
+}

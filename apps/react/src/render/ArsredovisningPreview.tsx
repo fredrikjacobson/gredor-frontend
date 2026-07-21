@@ -86,37 +86,45 @@ export function ArsredovisningPreview({
     );
   }
 
+  // Strukturen speglar Vues RenderMain exakt: iXBRL-huvudet är en syskon-nod
+  // FÖRE .arsredovisning-content, som i sin tur är dokumentets rot i den
+  // inskickade iXBRL:en. .arsredovisning-root är endast GUI-wrappern (skärm-ram/
+  // skugga) och ingår inte i det serialiserade dokumentet.
   return (
     <div className="arsredovisning-root">
-      <RenderIXBRLHeader
-        arsredovisning={arsredovisning}
-        decimalUnitItems={decimalUnitItems}
-      />
-      <RenderCover
-        arsredovisning={arsredovisning}
-        showFaststallelseintyg={showFaststallelseintyg}
-      />
-      <div className="page-break"></div>
-      <RenderForvaltningsberattelse
-        arsredovisning={arsredovisning}
-        taxonomyManager={managers.forvaltningsberattelse}
-      />
-      <div className="page-break"></div>
-      <RenderResultatrakning
-        arsredovisning={arsredovisning}
-        taxonomyManager={managers.resultatrakning}
-      />
-      <div className="page-break"></div>
-      <RenderBalansrakning
-        arsredovisning={arsredovisning}
-        taxonomyManager={managers.balansrakning}
-      />
-      <div className="page-break"></div>
-      <RenderNoter
-        arsredovisning={arsredovisning}
-        taxonomyManager={managers.noter}
-      />
-      <RenderUnderskrifter arsredovisning={arsredovisning} />
+      <div>
+        <RenderIXBRLHeader
+          arsredovisning={arsredovisning}
+          decimalUnitItems={decimalUnitItems}
+        />
+        <div className="arsredovisning-content">
+          <RenderCover
+            arsredovisning={arsredovisning}
+            showFaststallelseintyg={showFaststallelseintyg}
+          />
+          <div className="page-break"></div>
+          <RenderForvaltningsberattelse
+            arsredovisning={arsredovisning}
+            taxonomyManager={managers.forvaltningsberattelse}
+          />
+          <div className="page-break"></div>
+          <RenderResultatrakning
+            arsredovisning={arsredovisning}
+            taxonomyManager={managers.resultatrakning}
+          />
+          <div className="page-break"></div>
+          <RenderBalansrakning
+            arsredovisning={arsredovisning}
+            taxonomyManager={managers.balansrakning}
+          />
+          <div className="page-break"></div>
+          <RenderNoter
+            arsredovisning={arsredovisning}
+            taxonomyManager={managers.noter}
+          />
+          <RenderUnderskrifter arsredovisning={arsredovisning} />
+        </div>
+      </div>
     </div>
   );
 }

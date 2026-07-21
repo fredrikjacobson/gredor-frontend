@@ -1,6 +1,16 @@
 @import "tailwindcss";
 
 /*
+ * Dokumenttypsnitten (EB Garamond + FreeSans) — samma filer som Vue-appen, via
+ * $fonts-aliaset till repo-rotens public/fonts. De MÅSTE importeras (inte bara
+ * refereras) så Vite bäddar in @font-face-reglerna i en stilmall med
+ * data-vite-dev-id; annars hittar iXBRL-CSS-insamlaren dem inte och kan inte
+ * base64-bädda typsnitten i det inskickade dokumentet.
+ */
+@import "$fonts/ebgaramond/EBGaramond.css";
+@import "$fonts/freesans/FreeSans.css";
+
+/*
  * Gredors designtokens portade från src/assets/_variables.scss i Vue-appen.
  * Tailwind v4 CSS-first: @theme exponerar dem som utility-klasser (bg-primary,
  * text-secondary, rounded-lg, ...) och som CSS-variabler (--color-primary).
@@ -39,41 +49,51 @@
   --shadow-raised: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
-/* shadcn/ui semantiska variabler mappade mot Gredors palett (ljust tema). */
-:root {
-  --background: var(--color-surface-medium);
-  --foreground: var(--color-ink);
-  --primary: var(--color-primary);
-  --primary-foreground: #ffffff;
-  --secondary: var(--color-secondary);
-  --secondary-foreground: #ffffff;
-  --muted: var(--color-surface-dark);
-  --muted-foreground: var(--color-ink-medium);
-  --border: var(--color-line);
-  --input: var(--color-line);
-  --ring: color-mix(in srgb, var(--color-primary) 50%, transparent);
-  --destructive: var(--color-danger);
-  --radius: 0.5rem;
-}
+/*
+ * App-chrome-basstilar ligger i @layer base. VIKTIGT: iXBRL-CSS-insamlaren
+ * (collectUsedCssRules) itererar bara CSSStyleRule/CSSMediaRule på toppnivå och
+ * går INTE ner i @layer (CSSLayerBlockRule) — precis som Tailwinds preflight.
+ * Att lägga dessa globala :root/html/body-regler i @layer base gör därför att de
+ * INTE läcker in i det inskickade dokumentet (annars skulle t.ex. body:s grå
+ * bakgrund färga årsredovisningen; Vue-dokumentet är vitt).
+ */
+@layer base {
+  /* shadcn/ui semantiska variabler mappade mot Gredors palett (ljust tema). */
+  :root {
+    --background: var(--color-surface-medium);
+    --foreground: var(--color-ink);
+    --primary: var(--color-primary);
+    --primary-foreground: #ffffff;
+    --secondary: var(--color-secondary);
+    --secondary-foreground: #ffffff;
+    --muted: var(--color-surface-dark);
+    --muted-foreground: var(--color-ink-medium);
+    --border: var(--color-line);
+    --input: var(--color-line);
+    --ring: color-mix(in srgb, var(--color-primary) 50%, transparent);
+    --destructive: var(--color-danger);
+    --radius: 0.5rem;
+  }
 
-html {
-  font-size: 16px;
-}
+  html {
+    font-size: 16px;
+  }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  background-color: var(--color-surface-medium);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
-  font-weight: 400;
-  line-height: 1.5;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--color-surface-medium);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.5;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
 }

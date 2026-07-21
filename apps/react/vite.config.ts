@@ -38,6 +38,15 @@ export default defineConfig({
       { find: "@/data", replacement: domainSrc("data") },
       { find: "@/templates", replacement: domainSrc("templates") },
       { find: "@/api/schema", replacement: domainSrc("api/schema") },
+      // Samma typsnitt som Vue-appen (repo-rotens public/fonts). Importeras som
+      // modul (ej statisk public-fil) så Vite processar @font-face + url() och
+      // taggar stilmallen med data-vite-dev-id → CSS-insamlaren hittar dem.
+      {
+        find: "$fonts",
+        replacement: fileURLToPath(
+          new URL("../../public/fonts", import.meta.url),
+        ),
+      },
       { find: "@", replacement: fileURLToPath(new URL("./src", import.meta.url)) },
     ],
   },

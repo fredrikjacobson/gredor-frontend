@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { XMLParser } from "fast-xml-parser";
 import { diff } from "json-diff-ts";
 import type { Arsredovisning } from "@/model/arsredovisning/Arsredovisning.ts";
-import { convertHTMLToiXBRL } from "@/util/ixbrlSerializer.ts";
+import { serializeReactHTMLToiXBRL } from "@/ix/serializeIxbrl.ts";
+import { RENDER_FONT_FAMILY_WHITELIST } from "@/util/renderUtils.ts";
 import { convertiXBRLToXBRL } from "@/util/convertiXBRLToXBRL.ts";
 import { ResultatdispositionBeslutGodkannaVinst } from "@/data/faststallelseintyg.ts";
 import { ArsredovisningPreview } from "@/render/ArsredovisningPreview.tsx";
@@ -41,6 +42,8 @@ export function ParityHarness() {
   const [result, setResult] = useState<{
     diffCount: number;
     topChanges: { type: string; key: string }[];
+    cssBytes: number;
+    hasFontFace: boolean;
   } | null>(null);
   const [error, setError] = useState("");
 
@@ -76,12 +79,20 @@ export function ParityHarness() {
 
       try {
         setStatus("Serialiserar + jämför…");
-        const ixbrl = await convertHTMLToiXBRL(containerRef.current!, {
+        // Serialisera .arsredovisning-root:s innerHTML — exakt som Vue
+        // (getArsredovisningRoot). Riktig CSS-insamling + inbäddade typsnitt.
+        const ixbrl = await serializeReactHTMLToiXBRL(root as HTMLElement, {
           title: "Parity",
           programVersion: "Gredor-1.7.11", // matcha inte krävs för fakta-diff
-          collectUsedCss: async () => "",
+          fontFamilyWhitelist: RENDER_FONT_FAMILY_WHITELIST,
+          requireFonts: true,
         });
         (window as unknown as { __ixbrl?: string }).__ixbrl = ixbrl;
+
+        // Sammanfatta den insamlade dokument-CSS:en för synlig sanity-check.
+        const styleMatch = /<style[^>]*>([\s\S]*?)<\/style>/.exec(ixbrl);
+        const cssBytes = styleMatch ? styleMatch[1].length : 0;
+        const hasFontFace = /@font-face/.test(styleMatch?.[1] ?? "");
         const actualXbrl = convertiXBRLToXBRL(ixbrl);
         const expectedXml = await (
           await fetch("/devfixtures/testfild-expected.xml")
@@ -119,7 +130,12 @@ export function ParityHarness() {
         walk(diffs as unknown[], "");
 
         if (!cancelled) {
-          setResult({ diffCount: flat.length, topChanges: flat.slice(0, 40) });
+          setResult({
+            diffCount: flat.length,
+            topChanges: flat.slice(0, 40),
+            cssBytes,
+            hasFontFace,
+          });
           setStatus(flat.length === 0 ? "PARITY OK" : "Skillnader hittade");
         }
       } catch (e) {
@@ -152,6 +168,10 @@ export function ParityHarness() {
             }}
           >
             {result.diffCount} skillnader
+          </p>
+          <p data-testid="parity-css" style={{ fontSize: 13 }}>
+            Dokument-CSS: {result.cssBytes} tecken ·{" "}
+            {result.hasFontFace ? "@font-face inbäddat ✓" : "INGA typsnitt ✗"}
           </p>
           <ol style={{ fontSize: 12 }}>
             {result.topChanges.map((c, i) => (

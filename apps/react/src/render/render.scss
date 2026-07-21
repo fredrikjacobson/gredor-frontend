@@ -17,6 +17,12 @@
   }
 }
 
+// Byte-identisk kopia av src/assets/render.scss (Vue), med EN mekanisk skillnad:
+// Vues scoped-CSS `:deep(X)` finns inte i React (ingen scoped-kompilator). Här är
+// selektorerna oscopade descendant-selektorer (`:deep(h1)` → `h1`), vilket ger
+// exakt samma matchning som Vues `.arsredovisning-content[data-v] h1`. Krävs för
+// att reglerna ska tillämpas OCH samlas in i det inskickade dokumentet.
+
 // Detta är rotelementet i iXBRL:en som skickas till Bolagsverket
 .arsredovisning-content {
   width: 100%;
@@ -57,24 +63,24 @@
     }
   }
 
-  :deep(h1) {
+  h1 {
     font-size: 1.6rem;
     font-family: "FreeSans", sans-serif;
     font-weight: 700;
   }
 
-  :deep(h2) {
+  h2 {
     font-size: 1.35rem;
     font-weight: 600;
   }
 
-  :deep(h3) {
+  h3 {
     font-size: 1.15rem;
     font-weight: 600;
     margin-top: 0;
   }
 
-  :deep(table) {
+  table {
     width: 100%;
 
     tr {

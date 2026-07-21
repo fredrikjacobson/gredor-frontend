@@ -1,14 +1,16 @@
 /*
  * Stilar för de porterade render-komponenterna. I Vue låg dessa i respektive
  * komponents scoped <style> (data-v-). Här är de vanliga globala klasser,
- * scopade under .arsredovisning-root för att inte läcka in i app-chrome:t.
+ * scopade under .arsredovisning-content.
  *
- * OBS: för den slutliga dokument-CSS:en (som samlas in och bäddas in i iXBRL:en)
- * behöver selektorerna matcha det parsade dokumentet utan root-prefix — det
- * hanteras när React-serialiseraren kopplas in fullt ut (fas 3-avslut). Detta
- * är för den visuella förhandsgranskningen.
+ * VIKTIGT: scopet är .arsredovisning-content (INTE .arsredovisning-root). Det
+ * inskickade iXBRL-dokumentet serialiseras från .arsredovisning-root:s innerHTML
+ * (precis som Vue), så .arsredovisning-root finns INTE i det parsade dokumentet
+ * medan .arsredovisning-content gör det. Scopar vi under -content matchar därför
+ * CSS-insamlaren (querySelectorAll på selectorText) reglerna och bäddar in dem i
+ * dokumentet — samtidigt som scopet hindrar läckage in i app-chrome:t.
  */
-.arsredovisning-root {
+.arsredovisning-content {
   // RenderResultatrakning.vue (scoped)
   .rr-table {
     margin-bottom: 1rem;
