@@ -6,6 +6,17 @@ export interface ScrollspyGroup {
   title: string;
 }
 
+/** Närmaste scrollande förälder (editorns pane), annars viewport (null). */
+function getScrollParent(el: HTMLElement | null): HTMLElement | null {
+  let node = el?.parentElement ?? null;
+  while (node) {
+    const overflowY = getComputedStyle(node).overflowY;
+    if (overflowY === "auto" || overflowY === "scroll") return node;
+    node = node.parentElement;
+  }
+  return null;
+}
+
 /**
  * Platt sektionslayout med sticky scrollspy-undernavigering — ersätter
  * accordion-mönstret. Alla grupper är alltid synliga; chip-raden markerar den
@@ -46,7 +57,8 @@ export function ScrollspySection({
         }
         if (best) setActiveId(best);
       },
-      { threshold: [0, 0.25, 0.5, 0.75, 1] },
+      // Rooten är editorns scroll-pane (inte viewporten) så ratios blir korrekta.
+      { root: getScrollParent(els[0]), threshold: [0, 0.25, 0.5, 0.75, 1] },
     );
 
     for (const el of els) observer.observe(el);
@@ -55,7 +67,7 @@ export function ScrollspySection({
 
   return (
     <div>
-      <nav className="sticky top-0 z-10 -mx-1 mb-4 flex flex-wrap gap-2 bg-surface-medium/90 px-1 py-2 backdrop-blur">
+      <nav className="sticky top-0 z-10 -mx-6 -mt-6 mb-4 flex flex-wrap gap-2 bg-background/85 px-6 py-3 backdrop-blur">
         {groups.map((g) => (
           <button
             key={g.id}
@@ -68,8 +80,8 @@ export function ScrollspySection({
             className={cn(
               "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
               activeId === g.id
-                ? "border-primary bg-primary text-white"
-                : "border-line bg-surface text-ink-medium hover:border-primary/50",
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-line bg-card text-ink-medium hover:border-primary/50 hover:text-ink",
             )}
           >
             {g.title}

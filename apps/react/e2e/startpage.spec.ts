@@ -50,6 +50,8 @@ test("öppna .gredorfardig-fil laddar rapporten i editorn", async ({ page }) => 
     .setInputFiles(path.join(FIXTURES_DIR, "input/gredor/TestfilA.gredorfardig"));
 
   await expect(page).toHaveURL(/\/redigera/);
+  // Förhandsgranskningen är dold som standard; öppna overlayen för att verifiera.
+  await page.getByRole("button", { name: "Förhandsgranska" }).click();
   await expect(
     page.locator(".arsredovisning-content").getByText("Exempelbolaget AB").first(),
   ).toBeVisible({ timeout: 15_000 });
@@ -79,7 +81,7 @@ test("SIE-import förfyller resultaträkningen", async ({ page }) => {
   await expect(page).toHaveURL(/\/redigera/);
 
   // Resultaträkningen ska nu ha minst en förifylld belopprad.
-  await page.getByRole("button", { name: "Resultaträkning" }).click();
+  await page.getByRole("tab", { name: "Resultaträkning" }).click();
   const inputs = page.locator(".edit-belopprad-table input.belopprad-input");
   await expect(inputs.first()).toBeVisible({ timeout: 15_000 });
   await expect

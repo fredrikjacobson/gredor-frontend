@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 /*
  * Dokumenttypsnitten (EB Garamond + FreeSans) — samma filer som Vue-appen, via
@@ -14,7 +15,6 @@
  * Gredors designtokens portade från src/assets/_variables.scss i Vue-appen.
  * Tailwind v4 CSS-first: @theme exponerar dem som utility-klasser (bg-primary,
  * text-secondary, rounded-lg, ...) och som CSS-variabler (--color-primary).
- * shadcn/ui:s semantiska variabler mappas mot samma tokens i :root.
  */
 @theme {
   --color-primary: #566f41;
@@ -41,12 +41,43 @@
   --font-sans: InterVariable, sans-serif;
   --font-serif: "EB Garamond", serif;
 
-  --radius-sm: 0.25rem;
-  --radius: 0.375rem;
-  --radius-lg: 0.5rem;
+  /* Radie-skala i shadcn-stil, härledd från en bas-radie. */
+  --radius: 0.5rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 
-  --shadow-card: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  --shadow-raised: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-raised: 0 0.5rem 1rem rgba(0, 0, 0, 0.12);
+}
+
+/*
+ * shadcn/ui:s semantiska färger re-exponeras som Tailwind-utilities via
+ * @theme inline (dvs. utility-klassen pekar på var(--background) i stället för
+ * att kopiera värdet). Själva värdena bor i :root (@layer base) och mappas mot
+ * Gredors palett. Namnen krockar avsiktligt INTE med brand-tokens ovan
+ * (background/card/muted/accent/destructive/border/input/ring + *-foreground är
+ * nya) så bg-primary/bg-secondary m.fl. behåller sina Gredor-värden.
+ */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 }
 
 /*
@@ -58,21 +89,28 @@
  * bakgrund färga årsredovisningen; Vue-dokumentet är vitt).
  */
 @layer base {
-  /* shadcn/ui semantiska variabler mappade mot Gredors palett (ljust tema). */
+  /* shadcn/ui:s semantiska värden mappade mot Gredors palett (ljust tema).
+     .dark kan läggas till senare — dokumentet är dock alltid vitt. */
   :root {
     --background: var(--color-surface-medium);
     --foreground: var(--color-ink);
+    --card: var(--color-surface);
+    --card-foreground: var(--color-ink);
+    --popover: var(--color-surface-input);
+    --popover-foreground: var(--color-ink);
     --primary: var(--color-primary);
     --primary-foreground: #ffffff;
-    --secondary: var(--color-secondary);
-    --secondary-foreground: #ffffff;
-    --muted: var(--color-surface-dark);
+    --secondary: var(--color-surface-dark);
+    --secondary-foreground: var(--color-ink);
+    --muted: var(--color-surface-medium);
     --muted-foreground: var(--color-ink-medium);
+    --accent: var(--color-surface-dark);
+    --accent-foreground: var(--color-ink);
+    --destructive: var(--color-danger);
+    --destructive-foreground: #ffffff;
     --border: var(--color-line);
     --input: var(--color-line);
-    --ring: color-mix(in srgb, var(--color-primary) 50%, transparent);
-    --destructive: var(--color-danger);
-    --radius: 0.5rem;
+    --ring: color-mix(in srgb, var(--color-primary) 45%, transparent);
   }
 
   html {
@@ -96,4 +134,24 @@
     outline: 2px solid var(--ring);
     outline-offset: 2px;
   }
+}
+
+/*
+ * Un-layered override (INTE @layer) för preview-overlayen: render.scss tvingar
+ * .arsredovisning-root till en A4-hög ruta med egen scroll + skugga. Här
+ * neutraliseras det så overlayen kan skala hela dokumentet och scrolla i EN
+ * container. En un-layered regel med högre specificitet (0,2,0) vinner över
+ * render.scss (0,1,0, också un-layered) — en @layer-regel hade FÖRLORAT.
+ * Denna regel bäddas ALDRIG in i det inskickade dokumentet: insamlaren körs på
+ * StepGenereras egen preview (utanför .preview-overlay) och serialiserar
+ * .arsredovisning-root:s innerHTML, så varken .preview-overlay eller
+ * .arsredovisning-root finns i fragmentet → selektorn matchar aldrig.
+ */
+.preview-overlay .arsredovisning-root {
+  width: 210mm;
+  max-height: none;
+  height: auto;
+  overflow: visible;
+  box-shadow: none;
+  border: none;
 }

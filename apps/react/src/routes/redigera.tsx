@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { CheckCircle2, Circle, FileCheck, Send } from "lucide-react";
+import { Eye, FileCheck, Send } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
 import { TodoPanel } from "@/edit/TodoPanel.tsx";
 import { useArsredovisningStore } from "@/stores/arsredovisningStore.ts";
-import { ArsredovisningPreview } from "@/render/ArsredovisningPreview.tsx";
+import { PreviewPanel } from "@/render/PreviewPanel.tsx";
+import { useAppBarSlot } from "@/components/AppBarSlot.tsx";
 import { EditGrunduppgifter } from "@/edit/sections/EditGrunduppgifter.tsx";
 import { EditResultatrakning } from "@/edit/sections/EditResultatrakning.tsx";
 import { EditBalansrakning } from "@/edit/sections/EditBalansrakning.tsx";
@@ -30,7 +33,10 @@ function EditorPage() {
   const arsredovisning = useArsredovisningStore((s) => s.arsredovisning);
   // Rendera om preview + fält när dokumentet redigeras in-place.
   useArsredovisningStore((s) => s.revision);
+  const appBarSlot = useAppBarSlot();
   const [activeSection, setActiveSection] = useState<string>(SECTIONS[0].key);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [todoCollapsed, setTodoCollapsed] = useState(false);
 
   if (!arsredovisning) {
     return (
@@ -47,89 +53,100 @@ function EditorPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[1600px] px-4 py-6">
-      {/* Framstegsstegare — ersätter Vue-appens nav-tabs. Ingen dold
-          accordion-struktur längre; varje sektion är ett steg. */}
-      <ol className="mb-6 flex flex-wrap items-center gap-2">
-        {SECTIONS.map((section, i) => {
-          const active = section.key === activeSection;
-          return (
-            <li key={section.key}>
-              <button
-                onClick={() => setActiveSection(section.key)}
-                className={
-                  "flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors " +
-                  (active
-                    ? "border-primary bg-primary text-white"
-                    : "border-line bg-surface text-ink-medium hover:border-primary/50")
-                }
+    <Tabs
+      value={activeSection}
+      onValueChange={setActiveSection}
+      className="flex h-full flex-col gap-0"
+    >
+      {/* Sektionsflikarna portaleras in i den delade appbaren, så editorn inte
+          får en egen andra rad. Radix Tabs-kontexten följer med genom portalen
+          till TabsContent i body:n nedan. Åtgärderna ligger som FAB:ar. */}
+      {appBarSlot &&
+        createPortal(
+          <TabsList className="min-w-0 max-w-full overflow-x-auto">
+            {SECTIONS.map((section) => (
+              <TabsTrigger
+                key={section.key}
+                value={section.key}
+                data-testid={`section-tab-${section.key}`}
               >
-                {active ? (
-                  <Circle className="size-4" />
-                ) : (
-                  <CheckCircle2 className="size-4 opacity-40" />
-                )}
-                <span className="text-xs opacity-70">{i + 1}</span>
                 {section.label}
-              </button>
-            </li>
-          );
-        })}
-        <li>
-          <Button
-            size="sm"
-            onClick={() => navigate({ to: "/fardigstall/$step", params: { step: "paminnelse" } })}
-          >
-            <FileCheck className="size-4" /> Färdigställ inför årsstämma
-          </Button>
-        </li>
-        <li>
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => navigate({ to: "/skicka-in/$step", params: { step: "filer" } })}
-          >
-            <Send className="size-4" /> Skicka in till Bolagsverket
-          </Button>
-        </li>
-      </ol>
+              </TabsTrigger>
+            ))}
+          </TabsList>,
+          appBarSlot,
+        )}
 
-      <div className="grid items-start gap-4 lg:grid-cols-[1fr_360px_320px]">
-        {/* Redigeringspanel — platta, alltid synliga grupper med scrollspy. */}
-        <div>
-          {activeSection === "grunduppgifter" ? (
-            <EditGrunduppgifter />
-          ) : activeSection === "forvaltningsberattelse" ? (
-            <EditForvaltningsberattelse />
-          ) : activeSection === "resultatrakning" ? (
-            <EditResultatrakning />
-          ) : activeSection === "balansrakning" ? (
-            <EditBalansrakning />
-          ) : activeSection === "noter" ? (
-            <EditNoter />
-          ) : activeSection === "underskrifter" ? (
-            <EditUnderskrifter />
-          ) : (
-            <section className="rounded-lg border border-line bg-surface p-6 shadow-card">
-              <h2 className="mb-1 text-lg font-semibold text-ink">
-                {SECTIONS.find((s) => s.key === activeSection)?.label}
-              </h2>
-              <p className="text-sm text-ink-light">
-                Den här sektionen porteras härnäst i fas 4 (belopprad-
-                redigeringstabeller).
-              </p>
-            </section>
-          )}
+      {/* Delad yta: redigeringspanel (enda scroll-containern) + preview + todo. */}
+      <div className="flex min-h-0 flex-1">
+        {/* Relativ wrapper så FAB:arna flyter över redigeringsytan (inte över
+            todo-rail:en) och står stilla medan innehållet scrollar. */}
+        <div className="relative min-h-0 flex-1">
+          <div className="absolute inset-0 overflow-y-auto">
+            <div className="mx-auto max-w-3xl px-6 pb-28 pt-6">
+              <TabsContent value="grunduppgifter">
+                <EditGrunduppgifter />
+              </TabsContent>
+              <TabsContent value="forvaltningsberattelse">
+                <EditForvaltningsberattelse />
+              </TabsContent>
+              <TabsContent value="resultatrakning">
+                <EditResultatrakning />
+              </TabsContent>
+              <TabsContent value="balansrakning">
+                <EditBalansrakning />
+              </TabsContent>
+              <TabsContent value="noter">
+                <EditNoter />
+              </TabsContent>
+              <TabsContent value="underskrifter">
+                <EditUnderskrifter />
+              </TabsContent>
+            </div>
+          </div>
+
+          {/* Flytande åtgärdsknappar (FAB:ar). */}
+          <div className="pointer-events-none absolute bottom-6 right-6 z-30 flex flex-col items-end gap-3">
+            <Button
+              size="icon"
+              variant={previewOpen ? "default" : "outline"}
+              aria-label="Förhandsgranska"
+              aria-pressed={previewOpen}
+              className="pointer-events-auto size-12 rounded-full shadow-raised"
+              onClick={() => setPreviewOpen((v) => !v)}
+            >
+              <Eye className="size-5" />
+            </Button>
+            <Button
+              className="pointer-events-auto h-12 rounded-full px-5 shadow-raised"
+              onClick={() =>
+                navigate({
+                  to: "/fardigstall/$step",
+                  params: { step: "paminnelse" },
+                })
+              }
+            >
+              <FileCheck /> Färdigställ inför årsstämma
+            </Button>
+            <Button
+              variant="secondary"
+              className="pointer-events-auto h-12 rounded-full px-5 shadow-raised"
+              onClick={() =>
+                navigate({ to: "/skicka-in/$step", params: { step: "filer" } })
+              }
+            >
+              <Send /> Skicka in till Bolagsverket
+            </Button>
+          </div>
         </div>
 
-        {/* Förhandsgranskning (A4) — live iXBRL-preview, uppdateras vid edit. */}
-        <aside className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-auto rounded-lg border border-line bg-surface-medium p-2 shadow-card">
-          <ArsredovisningPreview arsredovisning={arsredovisning} />
-        </aside>
+        <PreviewPanel open={previewOpen} arsredovisning={arsredovisning} />
 
-        {/* Att åtgärda-panel — ersätter popover-baserade todo-listan. */}
-        <TodoPanel />
+        <TodoPanel
+          collapsed={todoCollapsed}
+          onCollapsedChange={setTodoCollapsed}
+        />
       </div>
-    </div>
+    </Tabs>
   );
 }

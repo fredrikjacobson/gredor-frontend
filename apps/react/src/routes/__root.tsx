@@ -1,61 +1,96 @@
-import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
-import { Toaster } from "sonner";
+import { useState } from "react";
+import {
+  createRootRoute,
+  Link,
+  Outlet,
+  useRouterState,
+} from "@tanstack/react-router";
 import { getAppFullVersion } from "@/util/configUtils.ts";
 import { ModalHost } from "@/components/ModalHost.tsx";
+import { Toaster } from "@/components/ui/sonner.tsx";
+import { AppBarSlotContext } from "@/components/AppBarSlot.tsx";
+import logoUrl from "@/assets/img/logo.svg";
 
 export const Route = createRootRoute({
   component: RootLayout,
 });
 
+const NAV_LINK =
+  "text-sm text-muted-foreground transition-colors hover:text-foreground [&.active]:font-medium [&.active]:text-foreground";
+
 function RootLayout() {
+  // Editorn låser scrollen (app-shell) och fyller appbaren via slot:en; övriga
+  // rutter flödar och scrollar i main med footern fäst i botten.
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isEditor = pathname.startsWith("/redigera");
+  const [slotEl, setSlotEl] = useState<HTMLElement | null>(null);
+
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="border-b border-line bg-surface">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <Link to="/" className="text-xl font-semibold text-primary">
-            Gredor
-          </Link>
-          <nav className="flex items-center gap-4 text-sm">
-            <Link
-              to="/"
-              className="text-ink-medium hover:text-primary [&.active]:text-primary [&.active]:font-medium"
-              activeOptions={{ exact: true }}
-            >
-              Start
-            </Link>
-            <Link
-              to="/redigera"
-              className="text-ink-medium hover:text-primary [&.active]:text-primary [&.active]:font-medium"
-            >
-              Redigera
-            </Link>
-            <Link
-              to="/om-gredor"
-              className="text-ink-medium hover:text-primary [&.active]:text-primary [&.active]:font-medium"
-            >
-              Om Gredor
-            </Link>
-          </nav>
-        </div>
+    <div className="flex h-screen flex-col overflow-hidden bg-background">
+      <header className="z-20 flex h-14 shrink-0 items-center gap-6 border-b bg-card px-4">
+        <Link to="/" className="flex shrink-0 items-center">
+          <img
+            src={logoUrl}
+            alt="Gredor – gratis årsredovisning"
+            className="h-7 w-auto"
+          />
+        </Link>
+        {isEditor ? (
+          <div
+            ref={setSlotEl}
+            className="flex min-w-0 flex-1 items-center gap-3"
+          />
+        ) : (
+          <>
+            <nav className="flex items-center gap-5">
+              <Link to="/" className={NAV_LINK} activeOptions={{ exact: true }}>
+                Start
+              </Link>
+              <Link to="/redigera" className={NAV_LINK}>
+                Redigera
+              </Link>
+              <Link to="/om-gredor" className={NAV_LINK}>
+                Om Gredor
+              </Link>
+            </nav>
+            <div className="ml-auto text-xs text-muted-foreground">
+              {getAppFullVersion()}
+            </div>
+          </>
+        )}
       </header>
 
-      <main className="flex-1">
-        <Outlet />
-      </main>
-
-      <footer className="border-t border-line bg-surface-dark">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-4 text-sm text-ink-medium">
-          <div className="flex gap-4">
-            <Link to="/om-gredor" className="hover:text-primary">
-              Om Gredor
-            </Link>
-            <Link to="/integritetspolicy" className="hover:text-primary">
-              Integritetspolicy
-            </Link>
+      {isEditor ? (
+        <main className="min-h-0 flex-1 overflow-hidden">
+          <AppBarSlotContext.Provider value={slotEl}>
+            <Outlet />
+          </AppBarSlotContext.Provider>
+        </main>
+      ) : (
+        <main className="min-h-0 flex-1 overflow-y-auto">
+          <div className="flex min-h-full flex-col">
+            <div className="flex-1">
+              <Outlet />
+            </div>
+            <footer className="border-t bg-card">
+              <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-6 text-sm text-muted-foreground">
+                <div className="flex gap-4">
+                  <Link to="/om-gredor" className="hover:text-foreground">
+                    Om Gredor
+                  </Link>
+                  <Link
+                    to="/integritetspolicy"
+                    className="hover:text-foreground"
+                  >
+                    Integritetspolicy
+                  </Link>
+                </div>
+                <div className="opacity-75">Version: {getAppFullVersion()}</div>
+              </div>
+            </footer>
           </div>
-          <div className="opacity-75">Version: {getAppFullVersion()}</div>
-        </div>
-      </footer>
+        </main>
+      )}
 
       {/* Globala värdar: kö-lagda meddelandemodaler + toaster. */}
       <ModalHost />

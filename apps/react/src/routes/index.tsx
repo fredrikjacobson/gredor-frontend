@@ -49,12 +49,12 @@ function StartPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12">
+    <div className="mx-auto flex min-h-full w-full max-w-4xl flex-col justify-center px-4 py-12">
       <div className="mb-10 text-center">
-        <h1 className="text-3xl font-semibold text-ink">
+        <h1 className="text-4xl font-semibold tracking-tight text-ink">
           Skapa din årsredovisning – helt gratis
         </h1>
-        <p className="mx-auto mt-3 max-w-2xl text-ink-medium">
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-ink-medium">
           Gredor hjälper dig att ta fram en K2-årsredovisning för aktiebolag och
           skicka in den digitalt till Bolagsverket. Importera en SIE-fil eller
           börja från början.
@@ -62,7 +62,7 @@ function StartPage() {
       </div>
 
       {resumeAvailable && (
-        <div className="mb-8 rounded-lg border border-primary/40 bg-surface p-5 shadow-card">
+        <div className="mb-8 rounded-xl border border-primary/40 bg-card p-5 shadow-card">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="font-medium text-ink">
@@ -137,8 +137,10 @@ function ActionCard(props: {
   onClick: () => void;
 }) {
   return (
-    <div className="flex flex-col rounded-lg border border-line bg-surface p-5 shadow-card">
-      <div className="mb-3">{props.icon}</div>
+    <div className="flex flex-col rounded-xl border bg-card p-6 shadow-card transition-shadow hover:shadow-raised">
+      <div className="mb-3 grid size-11 place-items-center rounded-lg bg-primary/10">
+        {props.icon}
+      </div>
       <div className="font-medium text-ink">{props.title}</div>
       <p className="mb-4 mt-1 flex-1 text-sm text-ink-medium">
         {props.description}

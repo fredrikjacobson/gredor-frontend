@@ -21,7 +21,9 @@ test("redigering av företagsnamn uppdaterar A4-förhandsgranskningen", async ({
 
   await input.fill("Testbolaget Smoke AB");
 
-  // Företagsnamnet renderas i försättsbladets ix:nonNumeric i preview:n.
+  // Förhandsgranskningen är dold som standard; öppna overlayen och verifiera att
+  // företagsnamnet renderas i försättsbladets ix:nonNumeric.
+  await page.getByRole("button", { name: "Förhandsgranska" }).click();
   await expect(
     page.locator(".arsredovisning-content").getByText("Testbolaget Smoke AB").first(),
   ).toBeVisible({ timeout: 15_000 });
@@ -37,8 +39,8 @@ test("editorn har sektionsstegare + färdigställ-/skicka-in-ingångar", async (
     page.getByRole("button", { name: /Skicka in till Bolagsverket/ }),
   ).toBeVisible();
 
-  // Byt sektion via stegaren och verifiera att redigeringspanelen byts ut.
-  await page.getByRole("button", { name: "Resultaträkning" }).click();
+  // Byt sektion via flik-stegaren och verifiera att redigeringspanelen byts ut.
+  await page.getByRole("tab", { name: "Resultaträkning" }).click();
   await expect(page.locator("#foretagsnamn")).toHaveCount(0);
   await expect(
     page.locator(".edit-belopprad-table").first(),

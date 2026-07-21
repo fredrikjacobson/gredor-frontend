@@ -1,28 +1,50 @@
 import { type ReactNode } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Leaf, Mail, ShieldCheck, TriangleAlert } from "lucide-react";
 
 export const Route = createFileRoute("/om-gredor")({
   component: OmGredorPage,
 });
 
-function InfoCard(props: { title: string; children: ReactNode }) {
+function InfoCard(props: {
+  icon: ReactNode;
+  title: string;
+  children: ReactNode;
+}) {
   return (
-    <section className="rounded-lg border border-line bg-surface p-5 shadow-card">
-      <h2 className="mb-3 text-lg font-semibold text-ink">{props.title}</h2>
-      <div className="space-y-3 text-sm text-ink-medium">{props.children}</div>
+    <section className="rounded-xl border bg-card p-6 shadow-card">
+      <div className="mb-4 flex items-center gap-3">
+        <div className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+          {props.icon}
+        </div>
+        <h2 className="text-lg font-semibold text-ink">{props.title}</h2>
+      </div>
+      <div className="space-y-3 text-sm leading-relaxed text-ink-medium">
+        {props.children}
+      </div>
     </section>
   );
 }
 
 function OmGredorPage() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
-      <h1 className="mb-8 text-center text-2xl font-semibold text-ink">
-        Om Gredor
-      </h1>
+    <div className="mx-auto max-w-5xl px-4 py-14">
+      <div className="mb-10 text-center">
+        <div className="mx-auto mb-4 grid size-14 place-items-center rounded-2xl bg-primary/10 text-primary">
+          <Leaf className="size-7" />
+        </div>
+        <h1 className="text-3xl font-semibold tracking-tight text-ink">
+          Om Gredor
+        </h1>
+        <p className="mx-auto mt-3 max-w-2xl text-ink-medium">
+          Ett kostnadsfritt, öppet verktyg för att ta fram och lämna in
+          K2-årsredovisningar för aktiebolag – byggt av småföretagare för
+          småföretagare.
+        </p>
+      </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <InfoCard title="Vad är Gredor?">
+      <div className="grid gap-5 md:grid-cols-2">
+        <InfoCard icon={<Leaf className="size-5" />} title="Vad är Gredor?">
           <p>
             Gredor är ett kostnadsfritt verktyg som du kan använda för att ta
             fram årsredovisningar och skicka in dem till Bolagsverket. Du kan
@@ -41,7 +63,10 @@ function OmGredorPage() {
           </p>
         </InfoCard>
 
-        <InfoCard title="Viktigt att tänka på när man använder Gredor">
+        <InfoCard
+          icon={<TriangleAlert className="size-5" />}
+          title="Viktigt att tänka på"
+        >
           <p>
             Målgruppen för Gredor är främst företagare som är bekväma med att
             ställa upp årsredovisningen själva. Har du exempelvis tidigare
@@ -66,7 +91,9 @@ function OmGredorPage() {
               Bokföringsnämndens vägledning
             </a>
             , alternativt en redovisningskonsult.{" "}
-            <strong>Gredor tillhandahålls utan några garantier.</strong>
+            <strong className="text-ink">
+              Gredor tillhandahålls utan några garantier.
+            </strong>
           </p>
           <p>
             Gredor stöder endast regelverket för årsredovisning i mindre företag
@@ -74,7 +101,10 @@ function OmGredorPage() {
           </p>
         </InfoCard>
 
-        <InfoCard title="Integritetspolicy">
+        <InfoCard
+          icon={<ShieldCheck className="size-5" />}
+          title="Integritetspolicy"
+        >
           <p>
             Gredor har inget intresse av att kartlägga ditt liv; Gredor skickar
             aldrig någon personlig data via internet utöver det som är
@@ -83,16 +113,16 @@ function OmGredorPage() {
           <p>
             <Link
               to="/integritetspolicy"
-              className="text-primary hover:underline"
+              className="font-medium text-primary hover:underline"
             >
               Läs hela integritetspolicyn →
             </Link>
           </p>
         </InfoCard>
 
-        <InfoCard title="Kontakt">
+        <InfoCard icon={<Mail className="size-5" />} title="Kontakt">
           <p>
-            <strong>
+            <strong className="text-ink">
               OBS: Vi är inte redovisningskonsulter och kan inte svara på frågor
               om t.ex. vad din årsredovisning borde innehålla.
             </strong>

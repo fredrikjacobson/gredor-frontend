@@ -18,11 +18,9 @@ export function EditGroup({
     <section
       id={id}
       // scroll-mt: kompensera för den sticky chip-navigeringen vid ankarhopp.
-      className="scroll-mt-4 rounded-lg border border-line bg-surface p-6 shadow-card"
+      className="scroll-mt-20 rounded-xl border bg-card p-6 shadow-card"
     >
-      <h3 className="mb-4 border-b border-line pb-2 text-base font-semibold text-ink">
-        {title}
-      </h3>
+      <h3 className="mb-4 text-base font-semibold text-ink">{title}</h3>
       <div className="space-y-4">{children}</div>
     </section>
   );

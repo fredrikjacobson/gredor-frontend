@@ -92,8 +92,6 @@ export function EditGrunduppgifter() {
           />
         </Field>
 
-        <hr className="border-line" />
-
         <Field label={`Logotyp (valfri; max ${MAX_LOGO_SIZE_KB} kB)`}>
           {foretagsinformation.logotyp.base64 == null ? (
             <>
