@@ -91,6 +91,11 @@ export function IxTuple(
   return createElement("ix:tuple", attrs(rest), children);
 }
 
+export function IxContinuation(props: { id: string } & Children) {
+  const { children, ...rest } = props;
+  return createElement("ix:continuation", attrs(rest), children);
+}
+
 // ---- link: ----------------------------------------------------------------
 
 export function LinkSchemaRef(props: { href: string; type?: string }) {

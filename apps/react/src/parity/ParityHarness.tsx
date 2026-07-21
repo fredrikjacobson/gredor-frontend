@@ -4,7 +4,27 @@ import { diff } from "json-diff-ts";
 import type { Arsredovisning } from "@/model/arsredovisning/Arsredovisning.ts";
 import { convertHTMLToiXBRL } from "@/util/ixbrlSerializer.ts";
 import { convertiXBRLToXBRL } from "@/util/convertiXBRLToXBRL.ts";
+import { ResultatdispositionBeslutGodkannaVinst } from "@/data/faststallelseintyg.ts";
 import { ArsredovisningPreview } from "@/render/ArsredovisningPreview.tsx";
+
+// Fastställelseintygsfälten matas in i skicka-flödets wizard (finns ej i
+// .gredorfardig-filen). Injicera samma värden som Cypress-fallet för TestfilD.
+function withTestfilDFaststallelseintyg(ar: Arsredovisning): Arsredovisning {
+  return {
+    ...ar,
+    faststallelseintyg: {
+      ...ar.faststallelseintyg,
+      datumArsstamma: "2025-09-27",
+      resultatdispositionBeslut: ResultatdispositionBeslutGodkannaVinst,
+      underskrift: {
+        tilltalsnamn: "Karl",
+        efternamn: "Karlsson",
+        roll: "Styrelseledamot",
+        datum: "2025-09-27",
+      },
+    },
+  };
+}
 
 /**
  * Fakta-nivå parity-sele: renderar hela förhandsgranskningen för en fixtur,
@@ -29,7 +49,7 @@ export function ParityHarness() {
     fetch("/devfixtures/testfild.json")
       .then((r) => r.json())
       .then((file) => {
-        setArsredovisning(file.data);
+        setArsredovisning(withTestfilDFaststallelseintyg(file.data));
         setStatus("Renderar förhandsgranskning…");
       })
       .catch((e) => setError(String(e)));
@@ -61,6 +81,7 @@ export function ParityHarness() {
           programVersion: "Gredor-1.7.11", // matcha inte krävs för fakta-diff
           collectUsedCss: async () => "",
         });
+        (window as unknown as { __ixbrl?: string }).__ixbrl = ixbrl;
         const actualXbrl = convertiXBRLToXBRL(ixbrl);
         const expectedXml = await (
           await fetch("/devfixtures/testfild-expected.xml")
@@ -150,7 +171,10 @@ export function ParityHarness() {
         style={{ position: "absolute", left: -99999, top: 0 }}
       >
         {arsredovisning && (
-          <ArsredovisningPreview arsredovisning={arsredovisning} />
+          <ArsredovisningPreview
+            arsredovisning={arsredovisning}
+            showFaststallelseintyg
+          />
         )}
       </div>
     </div>

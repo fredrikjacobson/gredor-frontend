@@ -32,8 +32,10 @@ interface TaxonomyManagers {
  */
 export function ArsredovisningPreview({
   arsredovisning,
+  showFaststallelseintyg = false,
 }: {
   arsredovisning: Arsredovisning;
+  showFaststallelseintyg?: boolean;
 }) {
   const [managers, setManagers] = useState<TaxonomyManagers | null>(null);
 
@@ -90,7 +92,10 @@ export function ArsredovisningPreview({
         arsredovisning={arsredovisning}
         decimalUnitItems={decimalUnitItems}
       />
-      <RenderCover arsredovisning={arsredovisning} showFaststallelseintyg={false} />
+      <RenderCover
+        arsredovisning={arsredovisning}
+        showFaststallelseintyg={showFaststallelseintyg}
+      />
       <div className="page-break"></div>
       <RenderForvaltningsberattelse
         arsredovisning={arsredovisning}

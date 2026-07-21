@@ -1,10 +1,8 @@
 import type { Arsredovisning } from "@/model/arsredovisning/Arsredovisning.ts";
 import { IxNonNumeric } from "@/ix/ix.tsx";
+import { RenderFaststallelseintyg } from "@/render/blocks/RenderFaststallelseintyg.tsx";
 
-/**
- * Port av RenderCover.vue — försättsbladet. Fastställelseintyget är ännu inte
- * porterat (RenderFaststallelseintyg); visas därför inte.
- */
+/** Port av RenderCover.vue — försättsbladet. */
 export function RenderCover(props: {
   arsredovisning: Arsredovisning;
   showFaststallelseintyg: boolean;
@@ -59,6 +57,10 @@ export function RenderCover(props: {
         Om inte annat särskilt anges, redovisas alla belopp i hela{" "}
         {redovisningsinformation.redovisningsvaluta.namn}.
       </p>
+
+      {props.showFaststallelseintyg && (
+        <RenderFaststallelseintyg arsredovisning={arsredovisning} />
+      )}
     </div>
   );
 }
