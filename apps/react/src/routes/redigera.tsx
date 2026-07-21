@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { CheckCircle2, Circle, ListTodo, Send } from "lucide-react";
+import { CheckCircle2, Circle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
+import { TodoPanel } from "@/edit/TodoPanel.tsx";
 import { useArsredovisningStore } from "@/stores/arsredovisningStore.ts";
 import { ArsredovisningPreview } from "@/render/ArsredovisningPreview.tsx";
 import { EditGrunduppgifter } from "@/edit/sections/EditGrunduppgifter.tsx";
@@ -118,16 +119,8 @@ function EditorPage() {
           <ArsredovisningPreview arsredovisning={arsredovisning} />
         </aside>
 
-        {/* Att göra-panel — ersätter popover-baserade todo-listan. */}
-        <aside className="sticky top-4 rounded-lg border border-line bg-surface p-4 shadow-card">
-          <div className="mb-2 flex items-center gap-2 font-medium text-ink">
-            <ListTodo className="size-4 text-primary" /> Att göra
-          </div>
-          <p className="text-sm text-ink-light">
-            Todo-panelen (SIE-varningar + Bolagsverkets kontroller) kopplas in i
-            fas 4–5.
-          </p>
-        </aside>
+        {/* Att åtgärda-panel — ersätter popover-baserade todo-listan. */}
+        <TodoPanel />
       </div>
     </div>
   );
