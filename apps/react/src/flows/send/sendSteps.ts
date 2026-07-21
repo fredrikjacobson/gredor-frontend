@@ -1,4 +1,4 @@
-import isEmail from "validator/es/lib/isEmail";
+import isEmail from "validator/es/lib/isEmail.js";
 import LuhnAlgorithm from "@designbycode/luhn-algorithm";
 import type { useFlowStore } from "@/stores/flowStore.ts";
 
