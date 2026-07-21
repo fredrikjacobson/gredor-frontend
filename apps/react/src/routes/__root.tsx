@@ -26,6 +26,10 @@ function RootLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isEditor = pathname.startsWith("/redigera");
   const isHome = pathname === "/";
+  // Informationssidorna (om Gredor, integritetspolicy) visar ingen
+  // Start/Redigera-navigering i headern.
+  const isInfoPage =
+    pathname === "/om-gredor" || pathname === "/integritetspolicy";
   const [slotEl, setSlotEl] = useState<HTMLElement | null>(null);
 
   return (
@@ -51,18 +55,20 @@ function RootLayout() {
             </>
           ) : (
             <>
-              <nav className="flex items-center gap-5">
-                <Link
-                  to="/"
-                  className={NAV_LINK}
-                  activeOptions={{ exact: true }}
-                >
-                  Start
-                </Link>
-                <Link to="/redigera" className={NAV_LINK}>
-                  Redigera
-                </Link>
-              </nav>
+              {!isInfoPage && (
+                <nav className="flex items-center gap-5">
+                  <Link
+                    to="/"
+                    className={NAV_LINK}
+                    activeOptions={{ exact: true }}
+                  >
+                    Start
+                  </Link>
+                  <Link to="/redigera" className={NAV_LINK}>
+                    Redigera
+                  </Link>
+                </nav>
+              )}
               <div className="ml-auto text-xs text-muted-foreground">
                 {getAppFullVersion()}
               </div>
