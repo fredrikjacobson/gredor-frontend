@@ -4,6 +4,7 @@ import { CheckCircle2, Circle, ListTodo, Send } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { useArsredovisningStore } from "@/stores/arsredovisningStore.ts";
 import { ArsredovisningPreview } from "@/render/ArsredovisningPreview.tsx";
+import { EditGrunduppgifter } from "@/edit/sections/EditGrunduppgifter.tsx";
 
 export const Route = createFileRoute("/redigera")({
   component: EditorPage,
@@ -21,6 +22,8 @@ const SECTIONS = [
 function EditorPage() {
   const navigate = useNavigate();
   const arsredovisning = useArsredovisningStore((s) => s.arsredovisning);
+  // Rendera om preview + fält när dokumentet redigeras in-place.
+  useArsredovisningStore((s) => s.revision);
   const [activeSection, setActiveSection] = useState<string>(SECTIONS[0].key);
 
   if (!arsredovisning) {
@@ -77,26 +80,31 @@ function EditorPage() {
         </li>
       </ol>
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_360px_320px]">
-        {/* Redigeringspanel — platta, alltid synliga grupper (Fas 4). */}
-        <section className="rounded-lg border border-line bg-surface p-6 shadow-card">
-          <h2 className="mb-1 text-lg font-semibold text-ink">
-            {SECTIONS.find((s) => s.key === activeSection)?.label}
-          </h2>
-          <p className="text-sm text-ink-light">
-            Redigeringsytan för den här sektionen byggs i fas 4 (platta grupper
-            med sticky scrollspy-undernavigering istället för accordions).
-          </p>
-        </section>
+      <div className="grid items-start gap-4 lg:grid-cols-[1fr_360px_320px]">
+        {/* Redigeringspanel — platta, alltid synliga grupper med scrollspy. */}
+        <div>
+          {activeSection === "grunduppgifter" ? (
+            <EditGrunduppgifter />
+          ) : (
+            <section className="rounded-lg border border-line bg-surface p-6 shadow-card">
+              <h2 className="mb-1 text-lg font-semibold text-ink">
+                {SECTIONS.find((s) => s.key === activeSection)?.label}
+              </h2>
+              <p className="text-sm text-ink-light">
+                Den här sektionen porteras härnäst i fas 4 (belopprad-
+                redigeringstabeller).
+              </p>
+            </section>
+          )}
+        </div>
 
-        {/* Förhandsgranskning (A4) — live iXBRL-preview (resultaträkning
-            porterad; fler sektioner tillkommer). */}
-        <aside className="overflow-auto rounded-lg border border-line bg-surface-medium p-2 shadow-card">
+        {/* Förhandsgranskning (A4) — live iXBRL-preview, uppdateras vid edit. */}
+        <aside className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-auto rounded-lg border border-line bg-surface-medium p-2 shadow-card">
           <ArsredovisningPreview arsredovisning={arsredovisning} />
         </aside>
 
         {/* Att göra-panel — ersätter popover-baserade todo-listan. */}
-        <aside className="rounded-lg border border-line bg-surface p-4 shadow-card">
+        <aside className="sticky top-4 rounded-lg border border-line bg-surface p-4 shadow-card">
           <div className="mb-2 flex items-center gap-2 font-medium text-ink">
             <ListTodo className="size-4 text-primary" /> Att göra
           </div>

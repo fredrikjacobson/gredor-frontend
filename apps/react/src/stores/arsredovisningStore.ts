@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
 import type { Arsredovisning } from "@/model/arsredovisning/Arsredovisning.ts";
 import { readStorage, writeStorage } from "@/stores/gredorStorage.ts";
 
@@ -7,24 +6,39 @@ const AUTOSAVE_KEY = "AppAutosaveArsredovisning";
 
 interface ArsredovisningState {
   arsredovisning: Arsredovisning | null;
+  /**
+   * Bumpar vid varje in-place-redigering. Komponenter (redigeraren + preview)
+   * prenumererar på detta för att rendera om, eftersom vi muterar samma
+   * objektgraf i stället för att byta referens (se `edit`).
+   */
+  revision: number;
   /** Ladda in en årsredovisning (nytt, öppnat, exempel eller autosparat). */
   load: (arsredovisning: Arsredovisning) => void;
   /** Rensa nuvarande årsredovisning (börja om). */
   clear: () => void;
+  /**
+   * Redigera årsredovisningen in-place — som Vue-appen, som muterar den
+   * reaktiva grafen direkt och anropar domänmodellens metoder/settrar. Vi
+   * använder AVSIKTLIGT inte immer här: domänmodellerna är klass-liknande objekt
+   * med metoder som muterar `this`, och immers auto-frysning skulle få dessa
+   * mutationer att kasta. I stället muterar vi grafen och bumpar `revision`.
+   */
+  edit: (mutator: (arsredovisning: Arsredovisning) => void) => void;
 }
 
 export const useArsredovisningStore = create<ArsredovisningState>()(
-  immer((set) => ({
+  (set, get) => ({
     arsredovisning: readStorage<Arsredovisning | null>(AUTOSAVE_KEY, null),
-    load: (arsredovisning) =>
-      set((state) => {
-        state.arsredovisning = arsredovisning;
-      }),
-    clear: () =>
-      set((state) => {
-        state.arsredovisning = null;
-      }),
-  })),
+    revision: 0,
+    load: (arsredovisning) => set({ arsredovisning, revision: 0 }),
+    clear: () => set({ arsredovisning: null, revision: 0 }),
+    edit: (mutator) => {
+      const arsredovisning = get().arsredovisning;
+      if (!arsredovisning) return;
+      mutator(arsredovisning);
+      set((state) => ({ revision: state.revision + 1 }));
+    },
+  }),
 );
 
 /**
