@@ -7,7 +7,6 @@ import {
 } from "@tanstack/react-router";
 import { getAppFullVersion } from "@/util/configUtils.ts";
 import { ModalHost } from "@/components/ModalHost.tsx";
-import { SaveDraftButton } from "@/components/SaveDraftButton.tsx";
 import { Toaster } from "@/components/ui/sonner.tsx";
 import { AppBarSlotContext } from "@/components/AppBarSlot.tsx";
 import logoUrl from "@/assets/img/logo.svg";
@@ -44,18 +43,18 @@ function RootLayout() {
             />
           </Link>
           {isEditor ? (
-            <>
-              <div
-                ref={setSlotEl}
-                className="flex min-w-0 flex-1 items-center gap-3"
-              />
-              <div className="shrink-0">
-                <SaveDraftButton />
-              </div>
-            </>
+            // Editorn fyller slot:en med sektionsflikar + åtgärder (inkl.
+            // spara-knappen, som ligger direkt efter förhandsgransknings-
+            // knappen där).
+            <div
+              ref={setSlotEl}
+              className="flex min-w-0 flex-1 items-center gap-3"
+            />
           ) : (
-            <>
-              {!isInfoPage && (
+            /* Informationssidorna visar varken navigering eller version —
+               footern har redan versionen, annars stod den två gånger. */
+            !isInfoPage && (
+              <>
                 <nav className="flex items-center gap-5">
                   <Link
                     to="/"
@@ -68,11 +67,11 @@ function RootLayout() {
                     Redigera
                   </Link>
                 </nav>
-              )}
-              <div className="ml-auto text-xs text-muted-foreground">
-                {getAppFullVersion()}
-              </div>
-            </>
+                <div className="ml-auto text-xs text-muted-foreground">
+                  {getAppFullVersion()}
+                </div>
+              </>
+            )
           )}
         </header>
       )}

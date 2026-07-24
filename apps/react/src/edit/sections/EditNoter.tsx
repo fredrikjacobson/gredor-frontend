@@ -179,7 +179,10 @@ export function EditNoter() {
                   </button>
 
                   {isOpen && (
-                    <div className="space-y-6 border-t border-line px-6 pb-6 pt-5">
+                    // Varje not är en egen panel mot en tonad bakgrund. En ren
+                    // avdelare räckte inte — noterna flöt ihop till en enda
+                    // lång kolumn av fält.
+                    <div className="space-y-3 border-t border-line bg-surface-medium/50 p-4">
                       {items.map(({ group, groupIndex }) => {
                         const rows = grouped[groupIndex];
                         const noteLabel =
@@ -195,10 +198,10 @@ export function EditNoter() {
                           <div
                             key={group.xmlName}
                             id={`noter-${group.xmlName}`}
-                            className="scroll-mt-24"
+                            className="scroll-mt-24 rounded-lg border border-line bg-card p-4 shadow-card"
                           >
                             {showNoteHeading && (
-                              <h3 className="mb-2 text-sm font-semibold text-ink">
+                              <h3 className="mb-3 border-b border-line pb-2 text-sm font-semibold text-ink">
                                 {noteLabel}
                               </h3>
                             )}

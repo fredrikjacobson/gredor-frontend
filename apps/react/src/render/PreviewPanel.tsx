@@ -34,7 +34,7 @@ export function PreviewPanel({
   const [naturalHeight, setNaturalHeight] = useState(0);
   // null = anpassa till bredd; ett tal = explicit zoomnivå.
   const [zoom, setZoom] = useState<number | null>(null);
-  // null = använd standardbredd (46%); ett tal = användarens dragna bredd i px.
+  // null = använd standardbredd; ett tal = användarens dragna bredd i px.
   const [dragWidth, setDragWidth] = useState<number | null>(null);
   const [dragging, setDragging] = useState(false);
 
@@ -125,13 +125,16 @@ export function PreviewPanel({
         open && dragWidth != null ? { width: `${dragWidth}px` } : undefined
       }
       className={cn(
-        "relative flex shrink-0 flex-col overflow-hidden border-l bg-surface-medium",
+        "relative flex flex-col overflow-hidden border-l bg-surface-medium",
         !dragging && "transition-[width] duration-300 ease-in-out",
+        // Öppen panel får krympa (men aldrig under sin min-bredd) så att
+        // redigeringsytans önskade bredd vinner i stället för att raden svämmar
+        // över på smalare fönster.
         open
           ? dragWidth != null
-            ? "min-w-[360px]"
-            : "w-[40%] min-w-[360px] max-w-[620px]"
-          : "w-0",
+            ? "min-w-[380px]"
+            : "w-[40%] min-w-[380px] max-w-[620px]"
+          : "w-0 shrink-0",
       )}
     >
       {/* Dra-handtag för att ändra delningen. */}
@@ -151,8 +154,12 @@ export function PreviewPanel({
       )}
       <div className="flex h-full w-full min-w-[380px] flex-col">
         <div className="flex shrink-0 items-center justify-between gap-2 px-3 py-2">
-          <span className="text-sm font-medium text-ink">Förhandsgranskning</span>
-          <div className="flex items-center gap-1">
+          {/* Rubriken får kortas av när panelen är som smalast — zoom- och
+              anpassa-kontrollerna ska aldrig klippas bort. */}
+          <span className="min-w-0 truncate text-sm font-medium text-ink">
+            Förhandsgranskning
+          </span>
+          <div className="flex shrink-0 items-center gap-1">
             <Button
               size="icon"
               variant="ghost"

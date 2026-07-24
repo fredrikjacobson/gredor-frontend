@@ -21,9 +21,8 @@ test("redigering av företagsnamn uppdaterar A4-förhandsgranskningen", async ({
 
   await input.fill("Testbolaget Smoke AB");
 
-  // Förhandsgranskningen är dold som standard; öppna overlayen och verifiera att
-  // företagsnamnet renderas i försättsbladets ix:nonNumeric.
-  await page.getByRole("button", { name: "Förhandsgranska" }).click();
+  // Förhandsgranskningen är öppen som standard; verifiera att företagsnamnet
+  // renderas i försättsbladets ix:nonNumeric.
   await expect(
     page.locator(".arsredovisning-content").getByText("Testbolaget Smoke AB").first(),
   ).toBeVisible({ timeout: 15_000 });
@@ -51,8 +50,10 @@ test("färdigställ-ingången öppnar påminnelsesteget", async ({ page }) => {
   await page
     .getByRole("button", { name: /Färdigställ inför årsstämma/ })
     .click();
-  await expect(page).toHaveURL(/\/fardigstall\/paminnelse/);
-  await expect(page.getByText("Glöm inte…").first()).toBeVisible();
+  // Guiden är en modal (inte längre en egen rutt) och startar på påminnelsen.
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText("Glöm inte…").first()).toBeVisible();
   // Påminnelsen listar notkopplingar när taxonomierna laddat.
   await expect(
     page.getByTestId("finalize-reminder-noter-connections-list"),

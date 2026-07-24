@@ -1,14 +1,14 @@
-import { type ReactNode, useRef } from "react";
+import { useRef } from "react";
 import { Trash2 } from "lucide-react";
 import type { Arsredovisning } from "@/model/arsredovisning/Arsredovisning.ts";
 import { REDOVISNINGSVALUTOR } from "@/data/redovisningsvalutor.ts";
 import { AVGIVANDE_TYPER } from "@/data/avgivande.ts";
 import { useArsredovisningStore } from "@/stores/arsredovisningStore.ts";
 import { Input } from "@/components/ui/input.tsx";
-import { Label } from "@/components/ui/label.tsx";
 import { Select } from "@/components/ui/select.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { EditGroup } from "@/edit/EditGroup.tsx";
+import { Field } from "@/edit/Field.tsx";
 import { ScrollspySection, type ScrollspyGroup } from "@/edit/ScrollspySection.tsx";
 
 const MAX_LOGO_SIZE_KB = 512;
@@ -18,16 +18,6 @@ export const GRUNDUPPGIFTER_GROUPS: ScrollspyGroup[] = [
   { id: "grunduppgifter-redovisningsinformation", title: "Redovisningsinformation" },
   { id: "grunduppgifter-rakenskapsar", title: "Räkenskapsår" },
 ];
-
-/** Ett fält med etikett. */
-function Field({ label, htmlFor, children }: { label: string; htmlFor?: string; children: ReactNode }) {
-  return (
-    <div>
-      <Label htmlFor={htmlFor}>{label}</Label>
-      {children}
-    </div>
-  );
-}
 
 /**
  * Port av EditGrunduppgifter.vue — men platt (grupper i stället för accordion).
@@ -61,7 +51,7 @@ export function EditGrunduppgifter() {
         id="grunduppgifter-foretagsinformation"
         title="Företagsinformation"
       >
-        <Field label="Företagsnamn" htmlFor="foretagsnamn">
+        <Field label="Företagsnamn" htmlFor="foretagsnamn" width="wide">
           <Input
             id="foretagsnamn"
             value={foretagsinformation.foretagsnamn}
@@ -78,7 +68,7 @@ export function EditGrunduppgifter() {
           />
         </Field>
 
-        <Field label="Organisationsnummer" htmlFor="organisationsnummer">
+        <Field label="Organisationsnummer" htmlFor="organisationsnummer" width="narrow">
           <Input
             id="organisationsnummer"
             value={foretagsinformation.organisationsnummer}
@@ -141,7 +131,7 @@ export function EditGrunduppgifter() {
         </Field>
 
         {foretagsinformation.logotyp.base64 && (
-          <Field label="Placering av logotyp" htmlFor="logotyp-placering">
+          <Field label="Placering av logotyp" htmlFor="logotyp-placering" width="narrow">
             <Select
               id="logotyp-placering"
               value={foretagsinformation.logotyp.placering}
@@ -185,7 +175,7 @@ export function EditGrunduppgifter() {
           </Select>
         </Field>
 
-        <Field label="Redovisningsvaluta" htmlFor="valutakod">
+        <Field label="Redovisningsvaluta" htmlFor="valutakod" width="narrow">
           <Select
             id="valutakod"
             value={redovisningsinformation.redovisningsvaluta.xbrlId}
@@ -211,6 +201,7 @@ export function EditGrunduppgifter() {
         <Field
           label="Startdatum räkenskapsår för årsredovisningen"
           htmlFor="startdatumNuvarande"
+          width="narrow"
         >
           <Input
             id="startdatumNuvarande"
@@ -227,6 +218,7 @@ export function EditGrunduppgifter() {
         <Field
           label="Slutdatum räkenskapsår för årsredovisningen"
           htmlFor="slutdatumNuvarande"
+          width="narrow"
         >
           <Input
             id="slutdatumNuvarande"
@@ -291,7 +283,7 @@ function TidigareRakenskapsar({
 
       {active && (
         <div className="mt-3 space-y-3">
-          <Field label={`Startdatum tidigare räkenskapsår, ${i} år före`}>
+          <Field label={`Startdatum tidigare räkenskapsår, ${i} år före`} width="narrow">
             <Input
               type="date"
               value={arsredovisning.verksamhetsarTidigare[i - 1].startdatum}
@@ -303,7 +295,7 @@ function TidigareRakenskapsar({
               }
             />
           </Field>
-          <Field label={`Slutdatum tidigare räkenskapsår, ${i} år före`}>
+          <Field label={`Slutdatum tidigare räkenskapsår, ${i} år före`} width="narrow">
             <Input
               type="date"
               value={arsredovisning.verksamhetsarTidigare[i - 1].slutdatum}

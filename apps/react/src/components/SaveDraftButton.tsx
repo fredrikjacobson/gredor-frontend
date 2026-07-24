@@ -30,13 +30,15 @@ export function SaveDraftButton() {
   return (
     <Button
       variant="outline"
-      size="sm"
+      size="icon"
+      className="size-9"
       onClick={saveDraft}
       disabled={!arsredovisning}
       data-testid="save-draft"
+      aria-label="Spara utkast som .gredorutkast-fil"
       title="Spara utkast som .gredorutkast-fil"
     >
-      <Download className="size-4" /> Spara
+      <Download className="size-4" />
     </Button>
   );
 }
