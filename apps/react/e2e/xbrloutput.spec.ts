@@ -50,6 +50,23 @@ async function clickNext(page: Page) {
   await btn.click();
 }
 
+/**
+ * Öppnar skicka-in-guiden. Guiden är en dialog i editorn (tidigare den routade
+ * sidan `/skicka-in/filer`, som numera omdirigerar till `/redigera`), och
+ * editorn kräver en öppen rapport — därför laddas exemplet först. Vilken
+ * rapport editorn visar spelar ingen roll för gaten: guiden arbetar mot den
+ * .gredorfardig-fil som laddas upp i steg 1 (flowStore), inte mot editorns.
+ */
+async function openSendWizard(page: Page) {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Visa exempel" }).click();
+  await expect(page).toHaveURL(/\/redigera/);
+  await page
+    .getByRole("button", { name: "Skicka in till Bolagsverket" })
+    .click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+}
+
 for (const { name, faststallelseintyg } of CASES) {
   test(`genererar fakta-identisk XBRL för ${name}.gredorfardig`, async ({ page }) => {
     // Fastnaglad klocka så fastställelseintygets underskriftsdatum (new Date())
@@ -65,7 +82,7 @@ for (const { name, faststallelseintyg } of CASES) {
     );
 
     // Steg 1 — Ladda upp fil
-    await page.goto("/skicka-in/filer");
+    await openSendWizard(page);
     await page
       .getByTestId("send-wizard-gredor-file-input")
       .setInputFiles(path.join(FIXTURES_DIR, "input/gredor", `${name}.gredorfardig`));

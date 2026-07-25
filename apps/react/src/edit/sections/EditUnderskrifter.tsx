@@ -2,11 +2,11 @@ import { type ReactNode } from "react";
 import { Info, Trash2 } from "lucide-react";
 import { useArsredovisningStore } from "@/stores/arsredovisningStore.ts";
 import { Input } from "@/components/ui/input.tsx";
-import { Label } from "@/components/ui/label.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Alert, AlertDescription } from "@/components/ui/alert.tsx";
 import { Card, CardContent } from "@/components/ui/card.tsx";
 import { EditGroup } from "@/edit/EditGroup.tsx";
+import { Field } from "@/edit/Field.tsx";
 import { ScrollspySection, type ScrollspyGroup } from "@/edit/ScrollspySection.tsx";
 
 const UNDERSKRIFTER_GROUPS: ScrollspyGroup[] = [
@@ -20,15 +20,6 @@ function InfoAlert({ children }: { children: ReactNode }) {
       <Info />
       <AlertDescription>{children}</AlertDescription>
     </Alert>
-  );
-}
-
-function Field({ label, htmlFor, children }: { label: string; htmlFor?: string; children: ReactNode }) {
-  return (
-    <div>
-      <Label htmlFor={htmlFor}>{label}</Label>
-      {children}
-    </div>
   );
 }
 
@@ -53,7 +44,7 @@ export function EditUnderskrifter() {
       </div>
 
       <EditGroup id="underskrifter-ort-datum" title="Ort och datum">
-        <Field label="Ort för undertecknande" htmlFor="undertecknandeOrt">
+        <Field label="Ort för undertecknande" htmlFor="undertecknandeOrt" width="medium">
           <Input
             id="undertecknandeOrt"
             value={redovisningsinformation.undertecknandeOrt ?? ""}
@@ -73,6 +64,7 @@ export function EditUnderskrifter() {
         <Field
           label="Datum då årsredovisningen var upprättad (redo att skrivas under)"
           htmlFor="datering"
+          width="narrow"
         >
           <Input
             id="datering"
@@ -101,7 +93,7 @@ export function EditUnderskrifter() {
           {redovisningsinformation.underskrifter.map((underskrift, index) => (
             <Card key={index} className="gap-0 py-4">
               <CardContent className="space-y-3 px-4">
-                <Field label="Tilltalsnamn" htmlFor={`tilltalsnamn${index}`}>
+                <Field label="Tilltalsnamn" htmlFor={`tilltalsnamn${index}`} width="full">
                   <Input
                     id={`tilltalsnamn${index}`}
                     value={underskrift.tilltalsnamn}
@@ -121,7 +113,7 @@ export function EditUnderskrifter() {
                     }
                   />
                 </Field>
-                <Field label="Efternamn" htmlFor={`efternamn${index}`}>
+                <Field label="Efternamn" htmlFor={`efternamn${index}`} width="full">
                   <Input
                     id={`efternamn${index}`}
                     value={underskrift.efternamn}
@@ -141,7 +133,7 @@ export function EditUnderskrifter() {
                     }
                   />
                 </Field>
-                <Field label="Befattning (valfritt)" htmlFor={`roll${index}`}>
+                <Field label="Befattning (valfritt)" htmlFor={`roll${index}`} width="full">
                   <Input
                     id={`roll${index}`}
                     value={underskrift.roll}
@@ -159,7 +151,7 @@ export function EditUnderskrifter() {
                     }
                   />
                 </Field>
-                <Field label="Underskriftsdatum" htmlFor={`datum${index}`}>
+                <Field label="Underskriftsdatum" htmlFor={`datum${index}`} width="narrow">
                   <Input
                     id={`datum${index}`}
                     type="date"

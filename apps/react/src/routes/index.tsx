@@ -148,6 +148,18 @@ function StartPage() {
             </Link>
           </Button>
         </div>
+
+        {/* Startsidan har ingen SiteFooter (ren landningssida) — integritets-
+            policyn måste gå att nå härifrån. */}
+        <nav className="mt-12 flex items-center justify-center gap-4 text-sm text-ink-light">
+          <Link to="/om-gredor" className="hover:text-ink">
+            Om Gredor
+          </Link>
+          <span aria-hidden>·</span>
+          <Link to="/integritetspolicy" className="hover:text-ink">
+            Integritetspolicy
+          </Link>
+        </nav>
       </div>
 
       <input

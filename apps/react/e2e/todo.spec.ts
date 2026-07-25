@@ -27,14 +27,19 @@ test("SIE-varningar hamnar i att-åtgärda-panelen och kan bockas av/tas bort", 
 
   await page.goto("/");
   await page.getByRole("button", { name: "Börja" }).click();
-  await page.getByTestId("new-arsredovisning-modal-orgnr").fill("5560021361");
+
+  // Steg 1 i dialogen är SIE-importen; steg 2 är företagsuppgifterna.
   await page
     .locator('input[type="file"][accept*=".sie"]')
     .setInputFiles(path.join(FIXTURES_DIR, "input/sie/SIETest.se"));
-
-  const create = page.getByTestId("new-arsredovisning-create");
-  await expect(create).toBeEnabled({ timeout: 15_000 });
+  const next = page.getByTestId("new-arsredovisning-next");
+  await expect(next).toBeEnabled({ timeout: 15_000 });
   await dismissModals(page);
+  await next.click();
+
+  await page.getByTestId("new-arsredovisning-modal-orgnr").fill("5560021361");
+  const create = page.getByTestId("new-arsredovisning-create");
+  await expect(create).toBeEnabled();
   await create.click();
   await dismissModals(page);
   await expect(page).toHaveURL(/\/redigera/);

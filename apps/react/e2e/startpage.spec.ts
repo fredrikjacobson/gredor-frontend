@@ -33,6 +33,8 @@ test("ny årsredovisning via dialog landar i editorn med orgnr", async ({
   await page.goto("/");
   await page.getByRole("button", { name: "Börja" }).click();
 
+  // Dialogen har två steg: SIE-import (frivillig) → företagsuppgifter.
+  await page.getByTestId("new-arsredovisning-next").click();
   await page
     .getByTestId("new-arsredovisning-modal-orgnr")
     .fill("5560021361");
@@ -50,8 +52,7 @@ test("öppna .gredorfardig-fil laddar rapporten i editorn", async ({ page }) => 
     .setInputFiles(path.join(FIXTURES_DIR, "input/gredor/TestfilA.gredorfardig"));
 
   await expect(page).toHaveURL(/\/redigera/);
-  // Förhandsgranskningen är dold som standard; öppna overlayen för att verifiera.
-  await page.getByRole("button", { name: "Förhandsgranska" }).click();
+  // Förhandsgranskningen är öppen som standard.
   await expect(
     page.locator(".arsredovisning-content").getByText("Exempelbolaget AB").first(),
   ).toBeVisible({ timeout: 15_000 });
@@ -61,18 +62,23 @@ test("SIE-import förfyller resultaträkningen", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Börja" }).click();
 
-  await page
-    .getByTestId("new-arsredovisning-modal-orgnr")
-    .fill("5560021361");
+  // Steg 1 i dialogen är SIE-importen.
   await page
     .locator('input[type="file"][accept*=".sie"]')
     .setInputFiles(path.join(FIXTURES_DIR, "input/sie/SIETest.se"));
 
   // SIE-import körs asynkront (knappen är "busy"); vänta tills den är klar och
-  // stäng ev. varningsmodal innan vi trycker "Skapa".
-  const create = page.getByTestId("new-arsredovisning-create");
-  await expect(create).toBeEnabled({ timeout: 15_000 });
+  // stäng ev. varningsmodal innan vi går vidare till steg 2.
+  const next = page.getByTestId("new-arsredovisning-next");
+  await expect(next).toBeEnabled({ timeout: 15_000 });
   await dismissModals(page);
+  await next.click();
+
+  // Steg 2: organisationsnumret kan vara förifyllt från SIE-filen.
+  await page
+    .getByTestId("new-arsredovisning-modal-orgnr")
+    .fill("5560021361");
+  const create = page.getByTestId("new-arsredovisning-create");
   await expect(create).toBeEnabled();
   await create.click();
   // Backend-uppslagningen (stubbad 500) visar en varningsmodal.

@@ -20,12 +20,16 @@ function domainSrc(subPath: string): string {
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Fast port: både .claude/launch.json och Playwright (baseURL + webServer)
+  // pekar på 5176. Utan strictPort valde Vite närmsta lediga port (5173 när
+  // Vue-appen inte körde) och e2e-körningen väntade förgäves på 5176. En
+  // extern körmiljö (t.ex. Claude Codes preview) kan välja port via PORT.
+  server: {
+    port: process.env.PORT ? Number(process.env.PORT) : 5176,
+    strictPort: true,
+  },
   define: {
     __APP_VERSION__: appVersion,
-  },
-  server: {
-    // Låter en extern körmiljö (t.ex. Claude Codes preview) välja port.
-    port: process.env.PORT ? Number(process.env.PORT) : undefined,
   },
   plugins: [
     // Måste ligga före react() för fil-baserad routing (routeTree.gen.ts).
