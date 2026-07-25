@@ -23,6 +23,10 @@ export default defineConfig({
   define: {
     __APP_VERSION__: appVersion,
   },
+  server: {
+    // Låter en extern körmiljö (t.ex. Claude Codes preview) välja port.
+    port: process.env.PORT ? Number(process.env.PORT) : undefined,
+  },
   plugins: [
     // Måste ligga före react() för fil-baserad routing (routeTree.gen.ts).
     tanstackRouter({ target: "react", autoCodeSplitting: true }),
@@ -47,7 +51,10 @@ export default defineConfig({
           new URL("../../public/fonts", import.meta.url),
         ),
       },
-      { find: "@", replacement: fileURLToPath(new URL("./src", import.meta.url)) },
+      {
+        find: "@",
+        replacement: fileURLToPath(new URL("./src", import.meta.url)),
+      },
     ],
   },
 });
