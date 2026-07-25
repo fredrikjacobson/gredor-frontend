@@ -140,12 +140,28 @@
     font-family: var(--font-sans);
     font-weight: 400;
     line-height: 1.5;
-    /* Inter: aktivera contextual alternates + optisk storleksanpassning. */
+    /* Inter: cv11 byter bokstavsformer, ss01 byter siffror. Se återställningen
+       för serif-ytorna nedan — egenskapen ärvs och gäller ALLA element, inte
+       bara de som faktiskt renderas i Inter. */
     font-feature-settings: "cv11", "ss01";
     font-optical-sizing: auto;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /*
+   * font-feature-settings ärvs och bryr sig inte om vilket typsnitt elementet
+   * faktiskt renderas i. Inters "ss01" är dess siffervariant, men SAMMA tagg i
+   * EB Garamond är kapitäler — så body-regeln ovan satte hela den renderade
+   * årsredovisningen i kapitäler. Värre än fult: body-regeln ligger i
+   * @layer base och samlas därför aldrig in i det inskickade dokumentet (se
+   * kommentaren vid @layer base ovan), så förhandsgranskningen visade något
+   * annat än det Bolagsverket faktiskt renderar. Återställ på serif-ytorna.
+   */
+  .arsredovisning-content,
+  .font-serif {
+    font-feature-settings: normal;
   }
 
   :focus-visible {

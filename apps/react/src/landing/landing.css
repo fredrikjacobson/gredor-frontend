@@ -1,0 +1,139 @@
+/*
+ * Startsidans dekorstilar. HELA filen ligger i @layer components av två skäl:
+ *
+ *  1. iXBRL-CSS-insamlaren (collectUsedCssRules i packages/domain/src/util/
+ *     ixbrlSerializer.ts) itererar bara toppnivåns CSSStyleRule/CSSMediaRule.
+ *     Ett @layer-block är en CSSLayerBlockRule och hoppas därför över helt —
+ *     samma trick som :root/html/body i app.css. Den här filen får en egen
+ *     data-vite-dev-id-stilmall i dev och SKULLE annars ha skannats.
+ *  2. Tailwinds utilities (@layer utilities) vinner över components, så en
+ *     variant kan finjustera med klasser i JSX utan !important.
+ *
+ * Allt som går att uttrycka som en Tailwind-arbitrary value hör hemma i JSX —
+ * de hamnar i @layer utilities och kan bevisligen inte läcka. Här bor bara det
+ * som kräver @keyframes, ::after eller flera deklarationer i samma regel.
+ *
+ * Varje selektor prefixas .gredor-landing-* och matchar därmed aldrig något
+ * inuti .arsredovisning-root — en andra, oberoende spärr mot läckage.
+ */
+
+@layer components {
+  /* ---------------------------------------------------------------- Variant B
+   * Drivande färgfält. Bara transform animeras (komposit-tråden, ingen layout).
+   * Fyra olika, primtalsaktiga varaktigheter så att slingan aldrig går i takt
+   * och blir synlig. filter: blur ligger på fälten SJÄLVA, aldrig på någon
+   * förälder — en förälder med filter blir containing block och då slutar den
+   * fixerade bakgrunden vara viewport-fäst.
+   */
+  .gredor-landing-blob {
+    position: absolute;
+    border-radius: 50%;
+    will-change: transform;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    animation-direction: alternate;
+  }
+
+  .gredor-landing-blob-1 {
+    animation-name: gredor-landing-drift-1;
+    animation-duration: 71s;
+  }
+  .gredor-landing-blob-2 {
+    animation-name: gredor-landing-drift-2;
+    animation-duration: 89s;
+  }
+  .gredor-landing-blob-3 {
+    animation-name: gredor-landing-drift-3;
+    animation-duration: 97s;
+  }
+  .gredor-landing-blob-4 {
+    animation-name: gredor-landing-drift-4;
+    animation-duration: 109s;
+  }
+
+  @keyframes gredor-landing-drift-1 {
+    from {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    to {
+      transform: translate3d(14vw, 9vh, 0) scale(1.25);
+    }
+  }
+  @keyframes gredor-landing-drift-2 {
+    from {
+      transform: translate3d(0, 0, 0) scale(1.15);
+    }
+    to {
+      transform: translate3d(-12vw, 12vh, 0) scale(0.9);
+    }
+  }
+  @keyframes gredor-landing-drift-3 {
+    from {
+      transform: translate3d(0, 0, 0) scale(0.95);
+    }
+    to {
+      transform: translate3d(10vw, -11vh, 0) scale(1.3);
+    }
+  }
+  @keyframes gredor-landing-drift-4 {
+    from {
+      transform: translate3d(0, 0, 0) scale(1.1);
+    }
+    to {
+      transform: translate3d(-9vw, -8vh, 0) scale(0.85);
+    }
+  }
+
+  /*
+   * Ljuskägla som följer pekaren. --mx/--my sätts imperativt via
+   * style.setProperty i en pointermove-lyssnare, så React renderar aldrig om
+   * vid musrörelse. Ligger på ::after (dekor) — kortets egen bakgrund och
+   * innehåll rörs inte, och inget av detta animerar kortets bounding box, som
+   * Playwright kräver stabil innan click().
+   */
+  .gredor-landing-spotlight::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 220ms ease-out;
+    background: radial-gradient(
+      14rem circle at var(--mx, 50%) var(--my, 50%),
+      color-mix(in srgb, var(--color-primary) 16%, transparent),
+      transparent 65%
+    );
+  }
+
+  .gredor-landing-spotlight:hover::after,
+  .gredor-landing-spotlight:focus-within::after {
+    opacity: 1;
+  }
+
+  /* ::after målas efter statiska syskon; utan det här hade ljuskäglan lagt sig
+     som en tonad hinna ÖVER kortets text. */
+  .gredor-landing-spotlight > * {
+    position: relative;
+  }
+
+  /*
+   * Reducerad rörelse: frys fälten i sitt utgångsläge i stället för att ta bort
+   * dem — bakgrunden ska se likadan ut, bara stilla. Variant C startar aldrig
+   * sin rAF-loop alls (se SeedCanvas).
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .gredor-landing-blob {
+      animation: none !important;
+    }
+    .gredor-landing-spotlight::after {
+      transition: none;
+    }
+  }
+
+  /* Dev-motsvarigheten till ovan, satt av <html data-gredor-motion="off">
+     när ?motion=off är med i URL:en. */
+  :root[data-gredor-motion="off"] .gredor-landing-blob {
+    animation: none !important;
+  }
+}
