@@ -1,6 +1,13 @@
 import { type ReactNode, useRef, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { BadgeCheck, FilePlus2, FolderOpen, Sparkles } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import {
+  ArrowRight,
+  BadgeCheck,
+  FilePlus2,
+  FolderOpen,
+  Leaf,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { BolagsverketLogo } from "@/components/BolagsverketLogo.tsx";
 import { useArsredovisningStore } from "@/stores/arsredovisningStore.ts";
@@ -122,6 +129,25 @@ function StartPage() {
           />
         </div>
 
+        {/* Startsidan saknar header/footer, så det här är vägen till Om Gredor. */}
+        <div className="mt-10 flex flex-col items-center gap-3 rounded-2xl border bg-card/60 p-6 text-center shadow-card sm:flex-row sm:text-left">
+          <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+            <Leaf className="size-6" />
+          </div>
+          <div className="flex-1">
+            <h2 className="font-semibold text-ink">Om Gredor</h2>
+            <p className="mt-1 text-sm text-ink-medium">
+              Gredor är ett kostnadsfritt, öppet verktyg – byggt av
+              småföretagare för småföretagare. Läs mer om vad Gredor är, vad du
+              bör tänka på och hur du kommer i kontakt med oss.
+            </p>
+          </div>
+          <Button asChild variant="outline" className="shrink-0">
+            <Link to="/om-gredor">
+              Mer om Gredor <ArrowRight className="size-4" />
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <input

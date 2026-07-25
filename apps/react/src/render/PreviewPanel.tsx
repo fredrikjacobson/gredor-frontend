@@ -1,4 +1,9 @@
-import { type PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from "react";
+import {
+  type PointerEvent as ReactPointerEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Maximize2, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { ArsredovisningPreview } from "@/render/ArsredovisningPreview.tsx";
@@ -52,10 +57,7 @@ export function PreviewPanel({
   // dokument). Mät om när öppningsanimationen (300 ms) har lagt sig.
   useEffect(() => {
     if (!open) return;
-    const timers = [
-      setTimeout(remeasure, 120),
-      setTimeout(remeasure, 360),
-    ];
+    const timers = [setTimeout(remeasure, 120), setTimeout(remeasure, 360)];
     return () => timers.forEach(clearTimeout);
   }, [open]);
 
@@ -125,7 +127,7 @@ export function PreviewPanel({
         open && dragWidth != null ? { width: `${dragWidth}px` } : undefined
       }
       className={cn(
-        "relative flex shrink-0 flex-col overflow-hidden border-l bg-surface-medium",
+        "relative flex shrink-0 flex-col overflow-hidden border-l bg-surface-medium max-md:hidden",
         !dragging && "transition-[width] duration-300 ease-in-out",
         open
           ? dragWidth != null
@@ -144,14 +146,18 @@ export function PreviewPanel({
           <span
             className={cn(
               "w-0.5 transition-colors",
-              dragging ? "bg-primary" : "bg-transparent group-hover:bg-primary/40",
+              dragging
+                ? "bg-primary"
+                : "bg-transparent group-hover:bg-primary/40",
             )}
           />
         </div>
       )}
       <div className="flex h-full w-full min-w-[380px] flex-col">
         <div className="flex shrink-0 items-center justify-between gap-2 px-3 py-2">
-          <span className="text-sm font-medium text-ink">Förhandsgranskning</span>
+          <span className="text-sm font-medium text-ink">
+            Förhandsgranskning
+          </span>
           <div className="flex items-center gap-1">
             <Button
               size="icon"

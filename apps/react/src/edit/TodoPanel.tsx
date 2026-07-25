@@ -73,7 +73,7 @@ export function TodoPanel({
 
   if (collapsed) {
     return (
-      <aside className="flex w-12 shrink-0 flex-col items-center border-l bg-card py-3">
+      <aside className="flex w-12 shrink-0 flex-col items-center border-l bg-card py-3 max-md:hidden">
         <button
           type="button"
           data-testid="todo-rail-toggle"
@@ -94,7 +94,7 @@ export function TodoPanel({
   }
 
   return (
-    <aside className="flex w-80 shrink-0 flex-col border-l bg-card">
+    <aside className="flex w-80 shrink-0 flex-col border-l bg-card max-md:hidden">
       <div className="flex items-center justify-between gap-2 px-4 py-3">
         <div className="flex items-center gap-2 font-medium text-ink">
           <ListChecks className="size-4 text-primary" /> Att åtgärda
@@ -256,9 +256,7 @@ function TodoItemCard({
                   <Circle className="mt-0.5 size-4 shrink-0 text-ink-light" />
                 )}
                 <span
-                  className={cn(
-                    task.complete && "text-ink-light line-through",
-                  )}
+                  className={cn(task.complete && "text-ink-light line-through")}
                 >
                   {task.text}
                 </span>

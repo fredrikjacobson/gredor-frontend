@@ -128,7 +128,7 @@ function EditorPage() {
               variant={previewOpen ? "default" : "outline"}
               aria-label="Förhandsgranska"
               aria-pressed={previewOpen}
-              className="pointer-events-auto size-12 rounded-full shadow-raised"
+              className="pointer-events-auto size-12 rounded-full shadow-raised max-md:hidden"
               onClick={() => setPreviewOpen((v) => !v)}
             >
               <Eye className="size-5" />

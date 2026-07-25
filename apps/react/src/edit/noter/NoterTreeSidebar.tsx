@@ -122,7 +122,7 @@ export function NoterTreeSidebar({
 
   if (railCollapsed) {
     return (
-      <aside className="flex w-12 shrink-0 flex-col items-center border-r bg-card py-3">
+      <aside className="flex w-12 shrink-0 flex-col items-center border-r bg-card py-3 max-md:hidden">
         <button
           type="button"
           title="Visa notträd"
@@ -137,7 +137,7 @@ export function NoterTreeSidebar({
   }
 
   return (
-    <aside className="flex w-64 shrink-0 flex-col border-r bg-card">
+    <aside className="flex w-64 shrink-0 flex-col border-r bg-card max-md:hidden">
       <div className="flex items-center justify-between gap-2 px-4 py-3">
         <div className="flex items-center gap-2 font-medium text-ink">
           <ListTree className="size-4 text-primary" /> Noter
