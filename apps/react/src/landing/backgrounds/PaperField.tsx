@@ -18,8 +18,10 @@ export function PaperField() {
       {/* Linjerat konto-papper, uttonat mot kanterna så det aldrig blir rutnät. */}
       <div className="absolute inset-0 [background-image:repeating-linear-gradient(to_bottom,transparent_0px,transparent_27px,color-mix(in_srgb,var(--color-primary)_14%,transparent)_27px,color-mix(in_srgb,var(--color-primary)_14%,transparent)_28px)] [mask-image:radial-gradient(115%_85%_at_50%_0%,black_15%,transparent_78%)]" />
 
-      {/* Marginallinjen i en huvudbok — placerad vid textkolumnens vänsterkant. */}
-      <div className="absolute inset-y-0 left-[max(1.5rem,calc(50%-33rem))] w-px bg-[color-mix(in_srgb,var(--color-secondary)_45%,transparent)] [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_65%,transparent)]" />
+      {/* Marginallinjen i en huvudbok — placerad vid textkolumnens vänsterkant.
+          Döljs i mobil: där klämmer max() den mot skärmkanten och den läser som
+          en ram runt sidan i stället för som en marginal i papperet. */}
+      <div className="absolute inset-y-0 left-[max(1.5rem,calc(50%-33rem))] hidden w-px bg-[color-mix(in_srgb,var(--color-secondary)_45%,transparent)] [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_65%,transparent)] md:block" />
 
       {/* Två mjuka ljusfält: oliv uppe till vänster, lera uppe till höger. */}
       <div className="absolute inset-0 bg-[radial-gradient(45%_45%_at_18%_0%,color-mix(in_srgb,var(--color-primary)_20%,transparent),transparent_70%),radial-gradient(40%_45%_at_88%_8%,color-mix(in_srgb,var(--color-secondary)_16%,transparent),transparent_70%)]" />

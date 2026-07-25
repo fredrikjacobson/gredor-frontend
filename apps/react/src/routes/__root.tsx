@@ -34,11 +34,15 @@ function RootLayout() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">
-      {/* Mobilnotis: verktyget är byggt för större skärmar. */}
-      <div className="flex shrink-0 items-center justify-center gap-2 border-b bg-warning/15 px-4 py-2 text-center text-sm text-ink md:hidden">
-        <Monitor className="size-4 shrink-0 text-[#b57f19]" />
-        Gredor är utformat för datorer – använd gärna en större skärm.
-      </div>
+      {/* Mobilnotis: verktyget är byggt för större skärmar. Visas inte på
+          startsidan — den är en ren landningssida som fungerar i mobil, notisen
+          hör hemma först när man går in i verktyget. */}
+      {!isHome && (
+        <div className="flex shrink-0 items-center justify-center gap-2 border-b bg-warning/15 px-4 py-2 text-center text-sm text-ink md:hidden">
+          <Monitor className="size-4 shrink-0 text-[#b57f19]" />
+          Gredor är utformat för datorer – använd gärna en större skärm.
+        </div>
+      )}
       {!isHome && (
         <header className="z-20 flex h-14 shrink-0 items-center gap-6 border-b bg-card px-4">
           <Link to="/" className="flex shrink-0 items-center">
