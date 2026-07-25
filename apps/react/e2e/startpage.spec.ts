@@ -5,7 +5,12 @@ import { expect, test, type Page } from "@playwright/test";
 /** Stänger eventuella meddelande-modaler (SIE-varningar, backend-fel) via OK. */
 async function dismissModals(page: Page) {
   const ok = page.getByRole("button", { name: "OK", exact: true });
-  while (await ok.first().isVisible().catch(() => false)) {
+  while (
+    await ok
+      .first()
+      .isVisible()
+      .catch(() => false)
+  ) {
     await ok.first().click();
     await page.waitForTimeout(100);
   }
@@ -27,6 +32,25 @@ test.beforeEach(async ({ page }) => {
   );
 });
 
+/**
+ * Startsidan finns i tre layoutvarianter (src/landing/). Alla knapptexter
+ * kommer från ACTION_LABELS, och Playwright matchar tillgängliga namn som
+ * skiftlägesokänslig DELSTRÄNG — så ett nytt element vars namn råkar innehålla
+ * "Börja" (t.ex. en variantväxlare eller en andra CTA) skulle få getByRole att
+ * träffa två element och alla testerna nedan att falla på strict mode. Den här
+ * kontrollen gör det till ett tydligt fel i stället för en gåta.
+ */
+test("startsidan exponerar exakt en Börja-knapp", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("button", { name: "Börja" })).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Visa exempel" })).toHaveCount(
+    1,
+  );
+  await expect(
+    page.locator('input[type="file"][accept*=".gredorfardig"]'),
+  ).toHaveCount(1);
+});
+
 test("ny årsredovisning via dialog landar i editorn med orgnr", async ({
   page,
 }) => {
@@ -35,13 +59,13 @@ test("ny årsredovisning via dialog landar i editorn med orgnr", async ({
 
   // Dialogen har två steg: SIE-import (frivillig) → företagsuppgifter.
   await page.getByTestId("new-arsredovisning-next").click();
-  await page
-    .getByTestId("new-arsredovisning-modal-orgnr")
-    .fill("5560021361");
+  await page.getByTestId("new-arsredovisning-modal-orgnr").fill("5560021361");
   await page.getByTestId("new-arsredovisning-create").click();
 
   await expect(page).toHaveURL(/\/redigera/);
-  await expect(page.locator("#organisationsnummer")).toHaveValue(/556002.?1361/);
+  await expect(page.locator("#organisationsnummer")).toHaveValue(
+    /556002.?1361/,
+  );
 });
 
 test("öppna .gredorfardig-fil laddar rapporten i editorn", async ({ page }) => {
@@ -49,12 +73,17 @@ test("öppna .gredorfardig-fil laddar rapporten i editorn", async ({ page }) => 
   // Filväljaren är dold; sätt filen direkt på inputen.
   await page
     .locator('input[type="file"][accept*=".gredorfardig"]')
-    .setInputFiles(path.join(FIXTURES_DIR, "input/gredor/TestfilA.gredorfardig"));
+    .setInputFiles(
+      path.join(FIXTURES_DIR, "input/gredor/TestfilA.gredorfardig"),
+    );
 
   await expect(page).toHaveURL(/\/redigera/);
   // Förhandsgranskningen är öppen som standard.
   await expect(
-    page.locator(".arsredovisning-content").getByText("Exempelbolaget AB").first(),
+    page
+      .locator(".arsredovisning-content")
+      .getByText("Exempelbolaget AB")
+      .first(),
   ).toBeVisible({ timeout: 15_000 });
 });
 
@@ -75,9 +104,7 @@ test("SIE-import förfyller resultaträkningen", async ({ page }) => {
   await next.click();
 
   // Steg 2: organisationsnumret kan vara förifyllt från SIE-filen.
-  await page
-    .getByTestId("new-arsredovisning-modal-orgnr")
-    .fill("5560021361");
+  await page.getByTestId("new-arsredovisning-modal-orgnr").fill("5560021361");
   const create = page.getByTestId("new-arsredovisning-create");
   await expect(create).toBeEnabled();
   await create.click();
